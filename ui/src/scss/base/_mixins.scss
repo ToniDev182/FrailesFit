@@ -1,0 +1,17 @@
+@mixin fadeIn($duration, $delay) {
+    animation: fadeInAnimation $duration $delay;
+  }
+  
+  @keyframes fadeInAnimation {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  
+
+  @mixin background-image($url) {
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0.316), rgb(126, 126, 126,0.316)), url($url);
+    background-position: 50%;
+    background-size: cover;
+    
+
+}

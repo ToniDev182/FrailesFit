@@ -1,0 +1,48 @@
+@use '../custom' as *;
+@use '../base/mixins' as m;
+
+
+
+.nosotros {
+    display: grid;
+    
+    @include m.background-image('../../../build/Img/cliente.avif');
+    background-repeat: no-repeat;
+    background-position: right top;
+    grid-template-rows: repeat(2, 1fr);
+
+    @media (min-width: 992px) {
+        grid-template-columns: repeat(3, 1fr);
+        background-size: cover;
+
+    }
+
+
+}
+
+.contenido-nosotros {
+    background-color: $white;
+    padding: 1rem;
+
+    .sobrenosotros-intro {
+        color: $verde;
+        font-weight: 700;
+    }
+
+    h2 {
+        text-align: justify;
+        color: $dark;
+
+    }
+
+    p {
+        text-align: justify;
+
+    }
+
+    @media (min-width: 992px) {
+        grid-column: 2 / 4;
+        grid-row: 1 / 2;
+        padding: 5rem;
+    }
+}

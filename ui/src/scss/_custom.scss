@@ -1,0 +1,41 @@
+@import '../../node_modules/bootstrap/scss/bootstrap.scss';
+
+
+$marron: #c4a64c;
+$marron_claro: #fee69d;
+$verde: #8FDF1D;
+$white: #FFFFFF;
+$dark: #1d1d1d;
+
+$primary: $verde;
+$secondary: $marron;
+$active: $dark;
+$white-alt: $white; 
+
+$fuente-headings: 'Outfit', sans-serif;
+$fuente-textos: 'Outfit', sans-serif;
+
+$headings-font-family: $fuente-headings;
+$font-family-base: $fuente-textos;
+$headings-font-weight: 900;
+
+$h1-font-size: 4.4rem;
+$h2-font-size: 3.6rem;
+$h3-font-size: 2.6rem;
+$headings-color: $primary;
+
+$btn-font-weight: 900;
+$btn-border-radius: 0;
+$btn-background-color: $verde; 
+$btn-hover-background-color: $marron_claro; 
+
+$link-color: $white;
+$link-decoration: none;
+$link-hover-color: $marron; 
+
+$card-border-radius: 0;
+$card-border-width: 0;
+$card-background-color: $white-alt; 
+
+$input-border-radius: 1rem;
+$input-border-color: $marron;

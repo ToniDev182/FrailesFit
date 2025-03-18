@@ -1,0 +1,56 @@
+@use '../base/mixins' as m;
+@use '../custom' as *;
+
+body{
+    background-image: url(../../../build/Img/trama.avif)
+}
+
+
+.header {
+    @include m.background-image('../../../build/Img/Maquinas\ \(1\).jpeg');
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    .navbar {
+        background-color: #343a4083;
+        border-radius: 2.5rem;
+    }
+
+    .navbar-nav .nav-link {
+        color: #ffffff;
+        font-size: 1.125rem;
+        padding: 0.625rem 0.9375rem;
+    }
+
+    .navbar-nav .nav-link:hover {
+        color: #adb5bd;
+    }
+
+    .form-control {
+        background-color: #ffffff;
+        color: #495057;
+        border-color: #ced4da;
+    }
+
+    .btn-outline-light {
+        color: #ffffff;
+        border-color: #ffffff;
+    }
+
+    .logo {
+        border-radius: 50%;
+        max-width: 9rem;
+        height: auto;
+        object-fit: cover;
+    }
+
+    .heading {
+        color: $white;
+
+        .frailes {
+            color: $verde;
+        }
+    }
+}
