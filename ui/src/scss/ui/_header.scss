@@ -2,12 +2,12 @@
 @use '../custom' as *;
 
 body{
-    background-image: url(../../../build/Img/trama.avif)
+    background-image: url(../../build/Img/trama.avif)
 }
 
 
 .header {
-    @include m.background-image('../../../build/Img/Maquinas\ \(1\).jpeg');
+    @include m.background-image('../../build/img/Maquinas1.avif');
     height: 100vh;
     background-size: cover;
     background-position: center;
