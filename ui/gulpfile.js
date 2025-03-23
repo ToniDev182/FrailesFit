@@ -21,24 +21,7 @@ function cssbuild(done) {
     src('build/css/app.css') // Asegúrate de que este archivo existe
         .pipe(purgecss({
             content: [
-                'index.html',
-                'producto1.html',
-                'producto2.html',
-                'producto3.html',
-                'producto4.html',
-                'producto5.html',
-                'producto6.html',
-                'producto7.html',
-                'producto8.html',
-                'producto9.html',
-                'tienda.html',
-                'ofertas.html',
-                'nosotros.html',
-                'gastronomia.html',
-                'entorno.html',
-                'Elaboracion.html',
-                'contacto.html',
-                'base.html'
+                'index.html'
             ]
         }))
         .pipe(rename({ suffix: '.min' })) // Agregar sufijo .min al archivo
