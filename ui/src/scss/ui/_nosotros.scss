@@ -6,7 +6,7 @@
 .nosotros {
     display: grid;
     
-    @include m.background-image('../../build/img/clientes/cliente40.avif');
+    @include m.background-image('../../build/img/Maquinas10.avif');
     background-repeat: no-repeat;
     background-position: right top;
     grid-template-rows: repeat(2, 1fr);
