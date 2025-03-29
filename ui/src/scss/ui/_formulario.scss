@@ -1,0 +1,51 @@
+@use '../custom' as *;
+@use '../base/mixins' as m;
+
+
+.contacto {
+
+    .formulario {
+
+        background-color: rgba(255, 255, 255, 0);
+        border: 1px solid $verde;
+        border-radius: 25px;
+
+        .headerForm {
+            background-color: #77777700;
+            color: $verde;
+
+        }
+
+        .form-label {
+            color: $verde;
+
+
+        }
+
+
+        .formulario-input {
+            background-color: rgba(139, 137, 137, 0.567);
+            color: rgb(255, 255, 255);
+            font-weight: bold;
+
+        }
+
+        ::placeholder {
+            color: rgb(255, 255, 255);
+
+            font-weight: bold;
+        }
+
+        .formBtn {
+            background-color: $verde;
+            color: $white;
+
+            &:hover {
+                background-color: $white;
+                color: $dark;
+            }
+        }
+
+
+    }
+}

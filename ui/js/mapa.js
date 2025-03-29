@@ -1,25 +1,56 @@
- // Inicializar el mapa centrado en Baeza
- var map = L.map('map').setView([37.993693, -3.468119], 14);
+function initMap(idMapa, ubicacion, titulo, imagen) {
+    const mapaDiv = document.getElementById(idMapa);
 
- // Cargar el mapa de OpenStreetMap
- L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-     attribution: '&copy; OpenStreetMap contributors'
- }).addTo(map);
+    if (!mapaDiv) {
+        console.warn(`El contenedor del mapa "${idMapa}" no existe en el DOM.`);
+        return;
+    }
 
- // Contenido del popup con imagen, mensaje y enlace
- var popupContent = `
-     <div style="text-align:center;">
-         <h3>Baeza</h3>
-         <img src="./build/img/coop27.jpg" alt="Catedral de Baeza" style="width:100%; max-width:250px; border-radius:8px;">
-         <p>Ciudad Patrimonio de la Humanidad, famosa por su historia y arquitectura renacentista.</p>
-         <a href="https://es.wikipedia.org/wiki/Baeza" target="_blank" 
-            style="display:inline-block; padding:6px 12px; background:#007BFF; color:white; text-decoration:none; border-radius:4px;">
-            Más información
-         </a>
-     </div>
- `;
- // Agregar un marcador en Baeza con el popup personalizado
- L.marker([37.993693, -3.468119]).addTo(map)
-     .bindPopup(popupContent)
-     .openPopup();
+    const map = new google.maps.Map(mapaDiv, {
+        center: ubicacion,
+        zoom: 17,
+    });
 
+    const marker = new google.maps.Marker({
+        position: ubicacion,
+        map: map,
+        title: titulo,
+        icon: `http://maps.google.com/mapfiles/ms/icons/green-dot.png`,
+    });
+
+    const infowindowContent = `
+        <div style="text-align: center;">
+            <h6>${titulo}</h6>
+            <img src="${imagen}" 
+                alt="${titulo}" 
+                style="width:100px; height:auto; border-radius: 8px;">
+        </div>
+    `;
+
+    const infowindow = new google.maps.InfoWindow({
+        content: infowindowContent,
+    });
+
+    infowindow.open(map, marker);
+
+    marker.addListener("click", () => {
+        infowindow.open(map, marker);
+    });
+}
+
+// Esperamos un poco para asegurarnos de que los contenedores del mapa existen en el DOM ya que estamos tenemos el codigo separado por componentes 
+setTimeout(function () {
+
+    /* Pista de Pádel */
+    initMap("mapa", { lat: 37.4849812434942, lng: -3.835837184015876 },
+        "Pista de Pádel - FrailesFit", "/ui/build/img/instalaciones/padel3.avif");
+
+    /* Pabellón Municipal */
+    initMap("mapa2", { lat: 37.48620759682936, lng: -3.8368328642593856 },
+        "Pabellón Municipal - FrailesFit", "/ui/build/img/instalaciones/pabellon4.avif");
+
+    // Mapa 3 - Nueva ubicación
+    initMap("mapa3", { lat: 37.48639017941614, lng: -3.8389264403327514 },
+        "FrailesFit", "/ui/build/img/entrada2.avif");
+
+}, 200);

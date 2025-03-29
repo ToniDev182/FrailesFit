@@ -1,14 +1,5 @@
 @use '../custom' as *;
 
-@mixin fadeIn($duration, $delay) {
-    animation: fadeInAnimation $duration $delay;
-  }
-  
-  @keyframes fadeInAnimation {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
-  }
-  
 
   @mixin background-image($url) {
     background-image: linear-gradient(to right, rgba(0, 0, 0, 0.316), rgb(126, 126, 126,0.316)), url($url);
@@ -16,39 +7,4 @@
     background-size: cover;
     
 
-}
-
-@mixin bgImage ($url, $color) {
-  background-image: linear-gradient(transparentize($color, .3%) 0%, transparentize($color, .3%) 100%), url($url);
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: top center;
-}
-
-
-@mixin bgIcono($url) {
-  background-image: url($url);
-  background-size: 10rem;
-  background-position: 50% 2rem; /* 50% para que los iconos quecen centrados horizontalmente y dos rem para que no queden pegados a la parte superior */
-  background-repeat: no-repeat;
-}
-
-@mixin headingBorder($colorTexto, $colorLinea) {
-  color: $colorTexto;
-  display: inline-block; /* Para que deacuerdo a la cantidad de texto la linea crezca dinamicamente */
-  margin-top:  5rem;
-  @include media-breakpoint-up(md){ /* eliminar el tamaño mediano en el margen superior */
-      margin-top: 0;
-  }
-
-  &::after {
-      content: '';
-      height: 1rem;
-      width: 100%;
-      background-color: $colorLinea;
-      display: block;
-      /* Para hacer que aparezcan los pseudoElementos */
-      margin: -1.4rem 0 0 0 ; /* subimos la linea un poquto hacia arriba */
-
-  }
 }

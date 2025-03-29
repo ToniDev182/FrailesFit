@@ -1,0 +1,74 @@
+@use '../custom' as *;
+
+.producto {
+
+    .heading-producto {
+        color: $verde;
+    }
+
+    .descripcion {
+        background-color: rgba(139, 137, 137, 0);
+
+        .p_descripcion {
+            color: $white;
+            hyphens: auto;
+
+        }
+
+
+        .producto-precio {
+            color: $white;
+
+
+        }
+
+        button {
+            background-color: $verde;
+            color: $white;
+
+            &:hover {
+                background-color: $white;
+                color: $dark;
+            }
+
+            &:focus {
+                box-shadow: none;
+            }
+        }
+
+    }
+
+}
+
+
+.merch {
+    background-color: $verde !important;
+    color: $white !important;
+
+
+    &:hover {
+        background-color: $dark !important;
+        color: $white !important;
+    }
+
+    &:focus {
+        box-shadow: none !important;
+    }
+}
+
+.paginacion {
+    background-color: #ffffff00;
+    color: $white;
+    font-weight: bold;
+    border: 1px solid $verde;
+    padding: 10px 15px;
+    margin: 0 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.2s ease;
+
+    &:hover {
+        transform: scale(1.1);
+    }
+
+}

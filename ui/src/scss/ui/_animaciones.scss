@@ -1,0 +1,50 @@
+.zoom {
+    overflow: hidden;
+
+    img {
+        transition: transform 0.3s ease-in-out;
+
+        &:hover {
+            transform: scale(1.5);
+        }
+    }
+}
+
+
+.slide {
+    transform: translateX(-100%);
+    opacity: 0;
+    animation: slideIn 1s ease-out forwards;
+
+
+    @keyframes slideIn {
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+}
+
+
+.slide-derecha {
+    transform: translateX(100%);
+    opacity: 0;
+    animation: slideInDerecha 1s ease-out forwards;
+
+
+    @keyframes slideInDerecha {
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+}
+
+
+.zoom-hover {
+    transition: transform 0.3s ease-in-out; 
+    
+    &:hover {
+        transform: scale(1.05); 
+    }
+}
