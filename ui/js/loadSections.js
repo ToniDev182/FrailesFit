@@ -42,3 +42,4 @@ document.addEventListener("DOMContentLoaded", () => { // El codigo se dispara cu
         { id: "suple", url: "src/components/suple.html" },
     ].forEach(({ id, url }) => loadComponent(id, url));  // recorremos cada a elemento del array y llamamos a loadcomponent, haciendo una solicitud para cada uno de ellos, si es exitosa se carga el elemento dentro del DOM
 });
+ 
