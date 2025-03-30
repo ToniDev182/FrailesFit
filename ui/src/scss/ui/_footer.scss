@@ -50,12 +50,14 @@
     }
 
     &__heading {
-        color: $dark;
+        color: $verde;
+        text-align: center;
     }
 
   
 
     &__link {
+        text-align: center;
         color: $white;
         text-decoration: none;
         display: block;

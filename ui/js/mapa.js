@@ -54,3 +54,7 @@ setTimeout(function () {
         "FrailesFit", "/ui/build/img/entrada2.avif");
 
 }, 200);
+
+
+
+

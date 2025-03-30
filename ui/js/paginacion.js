@@ -1,30 +1,30 @@
-document.addEventListener('DOMContentLoaded', function () {
-  const productosPorPagina = 6; 
-  let paginaActual = 1;
-  let productos = [];
+document.addEventListener('DOMContentLoaded', function () { // es ejecutado al cargarse el html 
+  const productosPorPagina = 6; // cada pagina muestra 6 productos 
+  let paginaActual = 1; // empezamos por la pagina 1
+  let productos = []; // aqui vamos a almacenar los productos que saquemos del json
 
-  fetch('/ui/src/components/suple.json')
-    .then(response => response.json())
+  fetch('/ui/src/components/suple.json') // hacemos la consulta
+    .then(response => response.json()) // obteneos la respuesta
     .then(data => {
-      productos = data;
-      mostrarProductos();
-      generarPaginacion();
+      productos = data; //almacenamos los datos en productos
+      mostrarProductos();  //mostramos productos
+      generarPaginacion(); // mostramos paginacion 
     })
-    .catch(error => console.error('Error al cargar los productos:', error));
+    .catch(error => console.error('Error al cargar los productos:', error)); // manejamos la posiblidad del error
 
   function mostrarProductos() {
-    const inicio = (paginaActual - 1) * productosPorPagina;
-    const fin = inicio + productosPorPagina;
-    const productosPagina = productos.slice(inicio, fin);
+    const inicio = (paginaActual - 1) * productosPorPagina; // restamos 1 a la pagina atual para que el primer producto sea el que ocupa la posicion 0, producto inicial 
+    const fin = inicio + productosPorPagina; // posicion final 
+    const productosPagina = productos.slice(inicio, fin); // slice permite extraer una porcion del array que son nuestros 6 productos
 
-    const contenedorProductos = document.getElementById('productos');
-    if (!contenedorProductos) {
+    const contenedorProductos = document.getElementById('productos');// selector de productos donde se va a insertar el producto
+    if (!contenedorProductos) { // si no existe el producto
       console.error('No se encontró el contenedor de productos.');
       return;
     }
-    contenedorProductos.innerHTML = ''; 
+    contenedorProductos.innerHTML = ''; // limpiamos el contenedor de productos 
 
-    productosPagina.forEach(producto => {
+    productosPagina.forEach(producto => { // Creamos dinamicamente el contenedor de cada producto
       const productoHTML = `
         <div class="col-md-6 col-lg-4 my-4 row align-items-center producto">
           <div class="col-4">
@@ -38,28 +38,28 @@ document.addEventListener('DOMContentLoaded', function () {
           </div>
         </div>
       `;
-      contenedorProductos.innerHTML += productoHTML;
+      contenedorProductos.innerHTML += productoHTML; // concadenamos cada producto sin borrar el anterior
     });
   }
 
   function generarPaginacion() {
-    const totalPaginas = Math.ceil(productos.length / productosPorPagina);
-    const contenedorPaginacion = document.getElementById('paginacion');
-    if (!contenedorPaginacion) {
+    const totalPaginas = Math.ceil(productos.length / productosPorPagina); // numero total de productos / cantidad de productos que se muestran por pagina, redondeamos para que todos los productos tengan unap pagina asignada
+    const contenedorPaginacion = document.getElementById('paginacion'); // selector de la paginacion 
+    if (!contenedorPaginacion) { // comprobamos que existe 
       console.error('No se encontró el contenedor de paginación.');
       return;
     }
-    contenedorPaginacion.innerHTML = ''; 
+    contenedorPaginacion.innerHTML = ''; // limpiamos el paginador 
 
-    for (let i = 1; i <= totalPaginas; i++) {
+    for (let i = 1; i <= totalPaginas; i++) { // bucle para crear un boton por cada pagina
       const boton = document.createElement('button');
-      boton.textContent = i;
-      boton.classList.add('paginacion');
+      boton.textContent = i; // valor de cada pagina 
+      boton.classList.add('paginacion'); // añadimos esta clase para configurar los estilos del boton
       boton.onclick = () => {
-        paginaActual = i;
-        mostrarProductos();
+        paginaActual = i; // actualiza la pagina actual, dandole el valor de i
+        mostrarProductos(); // llamada a productos para actualizar los productos mostrados
       };
-      contenedorPaginacion.appendChild(boton);
+      contenedorPaginacion.appendChild(boton); // se añaden los botones dentro del contenedor 
     }
   }
 });
