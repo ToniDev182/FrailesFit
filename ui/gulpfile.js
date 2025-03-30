@@ -44,7 +44,7 @@ function dev(done) {
     done();
 }
 
-// Tareas disponibles en Gulp
+// Tareas disponibles en Gulp 
 exports.css = css;
 exports.imagenes = imagenes;
 exports.dev = dev;
