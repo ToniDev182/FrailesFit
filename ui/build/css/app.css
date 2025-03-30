@@ -12069,9 +12069,11 @@ body {
   }
 }
 .footer__heading {
-  color: #1d1d1d;
+  color: #8FDF1D;
+  text-align: center;
 }
 .footer__link {
+  text-align: center;
   color: #f3f3f3;
   text-decoration: none;
   display: block;
