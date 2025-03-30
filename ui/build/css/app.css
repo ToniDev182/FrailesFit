@@ -11844,14 +11844,6 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
-@keyframes fadeInAnimation {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
 body {
   background-image: url(../../build/Img/trama.avif);
 }
@@ -12014,6 +12006,11 @@ body {
   color: #8FDF1D;
 }
 
+.entrenador-card {
+  background-color: rgba(139, 137, 137, 0.567) !important;
+  color: #f3f3f3;
+}
+
 .footer {
   background-image: linear-gradient(to right, rgba(0, 0, 0, 0.316), rgba(126, 126, 126, 0.316)), url("../../build/img/Maquinas6.avif");
   background-position: 50%;
@@ -12099,4 +12096,127 @@ body {
   text-align: center;
   padding: 1rem;
   margin-bottom: 0;
+}
+
+.contacto .formulario {
+  background-color: rgba(255, 255, 255, 0);
+  border: 1px solid #8FDF1D;
+  border-radius: 25px;
+}
+.contacto .formulario .headerForm {
+  background-color: rgba(119, 119, 119, 0);
+  color: #8FDF1D;
+}
+.contacto .formulario .form-label {
+  color: #8FDF1D;
+}
+.contacto .formulario .formulario-input {
+  background-color: rgba(139, 137, 137, 0.567);
+  color: rgb(255, 255, 255);
+  font-weight: bold;
+}
+.contacto .formulario ::placeholder {
+  color: rgb(255, 255, 255);
+  font-weight: bold;
+}
+.contacto .formulario .formBtn {
+  background-color: #8FDF1D;
+  color: #f3f3f3;
+}
+.contacto .formulario .formBtn:hover {
+  background-color: #f3f3f3;
+  color: #1d1d1d;
+}
+
+.zoom {
+  overflow: hidden;
+}
+.zoom img {
+  transition: transform 0.3s ease-in-out;
+}
+.zoom img:hover {
+  transform: scale(1.5);
+}
+
+.slide {
+  transform: translateX(-100%);
+  opacity: 0;
+  animation: slideIn 1s ease-out forwards;
+}
+@keyframes slideIn {
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.slide-derecha {
+  transform: translateX(100%);
+  opacity: 0;
+  animation: slideInDerecha 1s ease-out forwards;
+}
+@keyframes slideInDerecha {
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.zoom-hover {
+  transition: transform 0.3s ease-in-out;
+}
+.zoom-hover:hover {
+  transform: scale(1.05);
+}
+
+.producto .heading-producto {
+  color: #8FDF1D;
+}
+.producto .descripcion {
+  background-color: rgba(139, 137, 137, 0);
+}
+.producto .descripcion .p_descripcion {
+  color: #f3f3f3;
+  hyphens: auto;
+}
+.producto .descripcion .producto-precio {
+  color: #f3f3f3;
+}
+.producto .descripcion button {
+  background-color: #8FDF1D;
+  color: #f3f3f3;
+}
+.producto .descripcion button:hover {
+  background-color: #f3f3f3;
+  color: #1d1d1d;
+}
+.producto .descripcion button:focus {
+  box-shadow: none;
+}
+
+.merch {
+  background-color: #8FDF1D !important;
+  color: #f3f3f3 !important;
+}
+.merch:hover {
+  background-color: #1d1d1d !important;
+  color: #f3f3f3 !important;
+}
+.merch:focus {
+  box-shadow: none !important;
+}
+
+.paginacion {
+  background-color: rgba(255, 255, 255, 0);
+  color: #f3f3f3;
+  font-weight: bold;
+  border: 1px solid #8FDF1D;
+  padding: 10px 15px;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s, transform 0.2s ease;
+}
+.paginacion:hover {
+  transform: scale(1.1);
 }
