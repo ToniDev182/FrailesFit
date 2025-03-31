@@ -1,53 +1,71 @@
-const { src, dest, watch, series } = require('gulp');
-
-// Compilar CSS
+const { src, dest, watch, series, parallel } = require('gulp');
 const sass = require('gulp-sass')(require('sass'));
 const purgecss = require('gulp-purgecss');
 const rename = require('gulp-rename');
-
-// Optimización de imágenes
 const imagemin = require('gulp-imagemin');
 
-// Compilar SASS a CSS
-function css(done) {
-    src('src/scss/app.scss') // Identifica el archivo principal
-        .pipe(sass()) // Compila SASS a CSS
-        .pipe(dest('build/css')) // Guarda en la carpeta destino
-    done();
+// 1) COMPILE SASS => build/css/app.css
+function compileSass() {
+  return src('src/scss/app.scss')
+    .pipe(sass({ outputStyle: 'expanded' }).on('error', sass.logError))
+    .pipe(dest('build/css'));
 }
 
-// Minificar y limpiar CSS para producción
-function cssbuild(done) {
-    src('build/css/app.css') // Asegúrate de que este archivo existe
-        .pipe(purgecss({
-            content: [
-                'index.html'
-            ]
-        }))
-        .pipe(rename({ suffix: '.min' })) // Agregar sufijo .min al archivo
-        .pipe(dest('build/css')) // Guarda en la carpeta destino con el sufijo .min
-    done();
+// 2) OPTIMIZE IMAGES => build/img
+function optimizeImages() {
+  return src('src/img/**/*') // Double asterisk for nested folders
+    .pipe(imagemin({ optimizationLevel: 3 }))
+    .pipe(dest('build/img'));
 }
 
-// Optimizar imágenes
-function imagenes(done) {
-    src('src/img//*') // Selecciona todas las imágenes
-        .pipe(imagemin({ optimizationLevel: 3 })) // Optimiza imágenes
-        .pipe(dest('build/img')) // Guarda en la carpeta destino
-    done();
+// 3) COPY HTML => build/
+//    Copies top-level index.html AND all .html in src/**, no exceptions
+function copyHtml() {
+  return src(['index.html', 'src/**/*.html'])
+    .pipe(dest('build'));
 }
 
-// Vigilar cambios en archivos SCSS e imágenes
-function dev(done) {
-    watch('src/scss/**/*.scss', css); // Observa cambios en archivos SCSS
-    watch('src/img/**/', imagenes); // Observa cambios en imágenes
-    done();
+// 4) COPY JS => build/js
+//    If you have JS in 'src/js', adjust or add another task
+function copyJs() {
+  return src('js/**/*.js')
+    .pipe(dest('build/js'));
 }
 
-// Tareas disponibles en Gulp 
-exports.css = css;
-exports.imagenes = imagenes;
-exports.dev = dev;
-exports.build = series(cssbuild);
-exports.default = series(imagenes, css, dev);
+// 5) PURGE + MINIFY CSS => build/css/app.min.css
+function minifyCss() {
+  return src('build/css/app.css')
+    .pipe(
+      purgecss({
+        content: [
+          'build/**/*.html',
+          'build/js/**/*.js'
+        ]
+      })
+    )
+    .pipe(rename({ suffix: '.min' }))
+    .pipe(dest('build/css'));
+}
 
+// ----------------------
+// DEVELOPMENT WORKFLOW
+// ----------------------
+function dev() {
+  watch('src/scss/**/*.scss', compileSass);
+  watch('src/img/**/*', optimizeImages);
+  watch(['index.html', 'src/**/*.html'], copyHtml);
+  watch('js/**/*.js', copyJs);
+}
+
+// ----------------------
+// BUILD TASKS
+// ----------------------
+exports.build = series(
+  parallel(optimizeImages, compileSass, copyHtml, copyJs),
+  minifyCss
+);
+
+exports.default = series(
+  parallel(optimizeImages, compileSass, copyHtml, copyJs),
+  dev
+);
