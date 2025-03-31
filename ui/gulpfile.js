@@ -23,7 +23,7 @@ function optimizeImages() {
 function copyHtml() {
   return src(['index.html', 'src/**/*.html'])
     .pipe(dest('build'));
-}
+} 
 
 // 4) COPY JS => build/js
 //    If you have JS in 'src/js', adjust or add another task
