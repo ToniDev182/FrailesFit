@@ -26,9 +26,9 @@ function copyHtml() {
 }
 
 // 4) COPY JS => build/js
-//    If you have JS in 'src/js', adjust or add another task
+//    Include 'suple.json' from 'components/' directory
 function copyJs() {
-  return src('js/**/*.js')
+  return src(['js/**/*.js', 'src/components/suple.json'])
     .pipe(dest('build/js'));
 }
 
@@ -54,7 +54,7 @@ function dev() {
   watch('src/scss/**/*.scss', compileSass);
   watch('src/img/**/*', optimizeImages);
   watch(['index.html', 'src/**/*.html'], copyHtml);
-  watch('js/**/*.js', copyJs);
+  watch(['js/**/*.js', 'components/suple.json'], copyJs);
 }
 
 // ----------------------

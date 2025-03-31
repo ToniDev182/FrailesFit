@@ -1,22 +1,24 @@
-const loadComponent = (id, url) => { // Función para cargar un componente.
+const loadComponent = (id, url) => { // Función para cargar un componente dentro de un contenedor en la página
 
     // En producción, la ruta es absoluta, apuntando a la carpeta 'build' dentro de 'ui'
+    // Si estamos en un entorno de producción, la ruta base apuntará a la carpeta build, de lo contrario, será relativa
     let basePath = window.location.pathname.includes("/build/") ? "/ui/build/" : "../"; // Ajustamos la basePath dependiendo del entorno
+                                                                                
 
-    const element = document.getElementById(id); // Seleccionamos el elemento con el id correspondiente
+    const element = document.getElementById(id); // Seleccionamos el elemento con el id correspondiente en el DOM
 
-    if (!element) { // Si el elemento no existe, no hacemos nada
+    if (!element) { // Si el elemento con el id especificado no existe, no hacemos nada
         return;
     }
 
-    // Concatenamos la ruta base con la URL del componente
+    // Concatenamos la ruta base con la URL del componente (ej., /ui/build/components/header.html)
     fetch(basePath + url)
-        .then(response => response.ok ? response.text() : Promise.reject(`Error al cargar ${url}: ${response.statusText}`))
-        .then(html => element.innerHTML = html) // Insertamos el HTML si la respuesta es correcta
-        .catch(error => console.error(error)); // Si hay un error, lo mostramos en la consola
+        .then(response => response.ok ? response.text() : Promise.reject(`Error al cargar ${url}: ${response.statusText}`)) // Verificamos que la respuesta sea correcta
+        .then(html => element.innerHTML = html) // Insertamos el contenido HTML dentro del elemento si la respuesta es positiva
+        .catch(error => console.error(error)); // Si ocurre un error, lo mostramos en la consola
 };
 
-document.addEventListener("DOMContentLoaded", () => { // El código se dispara cuando la página ha cargado correctamente
+document.addEventListener("DOMContentLoaded", () => { // Este código se ejecuta cuando la página ha sido completamente cargada
 
     // Nuestro array de componentes con su id y su URL
     [
@@ -35,5 +37,5 @@ document.addEventListener("DOMContentLoaded", () => { // El código se dispara c
         { id: "muro", url: "components/muro.html" },
         { id: "merch", url: "components/merch.html" },
         { id: "suple", url: "components/suple.html" },
-    ].forEach(({ id, url }) => loadComponent(id, url)); // Recorremos el array de componentes y cargamos cada uno
+    ].forEach(({ id, url }) => loadComponent(id, url)); // Recorremos el array de componentes y cargamos cada uno en su respectivo contenedor
 });

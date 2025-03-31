@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {  //Nos aseguramos de
     const galeriaContainer = document.getElementById("galeria"); // nuestro ul
 
     if (galeriaContainer) { // si existe 
-        fetch("/ui/src/components/galeria.html") // hacemos una solicitud para obtener el contenido del archivo. 
+        fetch("/ui/build/components/galeria.html") // hacemos una solicitud para obtener el contenido del archivo. 
             .then(response => response.text()) // convertimos la respuesta en texto
             .then(data => { // luego se inserta data dentro de nuestro selector 
                 galeriaContainer.innerHTML = data;
@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {  //Nos aseguramos de
             });
     }
 
-    fetch("/ui/src/components/modalGaleria.html") // hacemos la peticion 
+    fetch("/ui/build/components/modalGaleria.html") // hacemos la peticion 
         .then(response => response.text()) // obtenemos respuesta en texto 
         .then(data => { // 
             document.body.insertAdjacentHTML("beforeend", data); // de esta manera insertamos el modal al final del body

@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () { // es ejecutado al c
   let paginaActual = 1; // empezamos por la pagina 1
   let productos = []; // aqui vamos a almacenar los productos que saquemos del json
 
-  fetch('/ui/src/components/suple.json') // hacemos la consulta
+  fetch('/ui/build/components/suple.json') // hacemos la consulta
     .then(response => response.json()) // obteneos la respuesta
     .then(data => {
       productos = data; //almacenamos los datos en productos
