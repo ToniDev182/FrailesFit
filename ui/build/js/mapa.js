@@ -43,18 +43,14 @@ setTimeout(function () {
 
     /* Pista de Pádel */
     initMap("mapa", { lat: 37.4849812434942, lng: -3.835837184015876 },
-        "Pista de Pádel - FrailesFit", "/ui/build/img/instalaciones/padel3.avif");
+        "Pista de Pádel - FrailesFit", "/https://i.postimg.cc/d3b7L4N6/padel3.avif");
 
     /* Pabellón Municipal */
     initMap("mapa2", { lat: 37.48620759682936, lng: -3.8368328642593856 },
-        "Pabellón Municipal - FrailesFit", "/ui/build/img/instalaciones/pabellon4.avif");
+        "Pabellón Municipal - FrailesFit", "https://i.postimg.cc/V6H0cYj3/pabellon4.avif");
 
     // Mapa 3 - Nueva ubicación
     initMap("mapa3", { lat: 37.48639017941614, lng: -3.8389264403327514 },
-        "FrailesFit", "/ui/build/img/entrada2.avif");
+        "FrailesFit", "https://i.postimg.cc/MHS2HBbR/entrada2.avif");
 
 }, 200);
-
-
-
-
