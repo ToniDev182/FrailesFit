@@ -3,14 +3,16 @@ document.addEventListener('DOMContentLoaded', function () { // es ejecutado al c
   let paginaActual = 1; // empezamos por la pagina 1
   let productos = []; // aqui vamos a almacenar los productos que saquemos del json
 
-  fetch('/js/suple.json') // hacemos la consulta /* /ui/build/js/suple.json */
-    .then(response => response.json()) // obteneos la respuesta
-    .then(data => {
-      productos = data; //almacenamos los datos en productos
-      mostrarProductos();  //mostramos productos
-      generarPaginacion(); // mostramos paginacion 
-    })
-    .catch(error => console.error('Error al cargar los productos:', error)); // manejamos la posiblidad del error
+  setTimeout(() => { // pequeño retraso para asegurar que el DOM esté listo
+    fetch('/js/suple.json') // hacemos la consulta /* /ui/build/js/suple.json */
+      .then(response => response.json()) // obteneos la respuesta
+      .then(data => {
+        productos = data; //almacenamos los datos en productos
+        mostrarProductos();  //mostramos productos
+        generarPaginacion(); // mostramos paginacion 
+      })
+      .catch(error => console.error('Error al cargar los productos:', error)); // manejamos la posiblidad del error
+  }, 200); // 100ms de espera antes de hacer la petición
 
   function mostrarProductos() {
     const inicio = (paginaActual - 1) * productosPorPagina; // restamos 1 a la pagina atual para que el primer producto sea el que ocupa la posicion 0, producto inicial 
@@ -38,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () { // es ejecutado al c
           </div>
         </div>
       `;
-      contenedorProductos.innerHTML += productoHTML; // concadenamos cada producto sin borrar el anterior
+      contenedorProductos.innerHTML += productoHTML; // concatenamos cada producto sin borrar el anterior
     });
   }
 

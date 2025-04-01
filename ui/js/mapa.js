@@ -43,7 +43,7 @@ setTimeout(function () {
 
     /* Pista de Pádel */
     initMap("mapa", { lat: 37.4849812434942, lng: -3.835837184015876 },
-        "Pista de Pádel - FrailesFit", "/https://i.postimg.cc/d3b7L4N6/padel3.avif");
+        "Pista de Pádel - FrailesFit", "https://i.postimg.cc/d3b7L4N6/padel3.avif");
 
     /* Pabellón Municipal */
     initMap("mapa2", { lat: 37.48620759682936, lng: -3.8368328642593856 },
