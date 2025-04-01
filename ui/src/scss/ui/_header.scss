@@ -3,12 +3,12 @@
 
 
 body {
-    background-image: url(../../build/Img/trama.avif)
+    background-image: url(../../src/img/trama.avif)
 }
 
 
 .header {
-    @include m.background-image('../../build/img/Maquinas1.avif');
+    @include m.background-image('../../src/img/Maquinas1.avif');
     height: 100vh;
     background-size: cover;
     background-position: center;

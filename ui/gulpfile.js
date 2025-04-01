@@ -4,47 +4,50 @@ const purgecss = require('gulp-purgecss');
 const rename = require('gulp-rename');
 const imagemin = require('gulp-imagemin');
 
-// 1) COMPILE SASS => build/css/app.css
+// 1) COMPILE SASS => build/src/css/app.css
 function compileSass() {
   return src('src/scss/app.scss')
     .pipe(sass({ outputStyle: 'expanded' }).on('error', sass.logError))
-    .pipe(dest('build/css'));
+    .pipe(dest('build/src/css'));
 }
 
-// 2) OPTIMIZE IMAGES => build/img
+// 2) OPTIMIZE IMAGES => build/src/img
 function optimizeImages() {
-  return src('src/img/**/*') // Double asterisk for nested folders
+  return src('src/img/**/*')
     .pipe(imagemin({ optimizationLevel: 3 }))
-    .pipe(dest('build/img'));
+    .pipe(dest('build/src/img'));
 }
 
-// 3) COPY HTML => build/
-//    Copies top-level index.html AND all .html in src/**, no exceptions
+// 3) COPY HTML
 function copyHtml() {
-  return src(['index.html', 'src/**/*.html'])
+  // Copiar solo index.html en build/
+  src('index.html')
     .pipe(dest('build'));
-} 
 
-// 4) COPY JS => build/js
-//    If you have JS in 'src/js', adjust or add another task
+  // Copiar el resto de los HTML en build/src/pages/
+  return src(['src/**/*.html'])
+    .pipe(dest('build/src'));
+}
+
+// 4) COPY JS + JSON => build/js
 function copyJs() {
-  return src('js/**/*.js')
+  return src('js/**/*.{js,json}') // Incluye tanto .js como .json
     .pipe(dest('build/js'));
 }
 
-// 5) PURGE + MINIFY CSS => build/css/app.min.css
+// 5) PURGE + MINIFY CSS => build/src/css/app.min.css
 function minifyCss() {
-  return src('build/css/app.css')
+  return src('build/src/css/app.css')
     .pipe(
       purgecss({
         content: [
           'build/**/*.html',
-          'build/js/**/*.js'
+          'build/src/js/**/*.js'
         ]
       })
     )
     .pipe(rename({ suffix: '.min' }))
-    .pipe(dest('build/css'));
+    .pipe(dest('build/src/css'));
 }
 
 // ----------------------

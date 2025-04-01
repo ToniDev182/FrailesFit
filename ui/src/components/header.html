@@ -3,12 +3,11 @@
         <nav class="navbar justify-content-between navbar-expand-lg navbar-dark slide">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">
-                    <img class="logo img-fluid" src="/ui/build/img/FrailesFitLogo.avif" alt="Logo del Gimnasio">
+                    <img class="logo img-fluid" src="./src/img/FrailesFitLogo.avif" alt="Logo del Gimnasio">
                 </a>
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false"
-                    aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
+                    aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
@@ -36,8 +35,10 @@
                                 Tienda
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="/ui/build/pages/suplementacion.html">Suplementación</a></li>
-                                <li><a class="dropdown-item" href="/ui/build/pages/merchandising.html">Merchandising</a></li>
+                                <li><a class="dropdown-item"
+                                        href="/ui/build/pages/suplementacion.html">Suplementación</a></li>
+                                <li><a class="dropdown-item" href="/ui/build/pages/merchandising.html">Merchandising</a>
+                                </li>
                             </ul>
                         </li>
                         <li class="nav-item">
@@ -47,27 +48,27 @@
 
 
 
+                    <button type="button" class="btn fw-bold px-5 login" data-bs-toggle="modal" data-bs-target="#modal">
+                        Login
+                    </button>
 
-                    <button type="button" class="btn fw-bold px-5 login" data-bs-toggle="modal"
-                        data-bs-target="#modal">Login</button>
-
-
-                    <div id="modal" class="modal fade">
+                    <!-- Modal -->
+                    <div id="modal" class="modal fade" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h2 class="modal-title">Login</h2>
-                                    <button data-bs-dismiss="modal" type="button" class="btn-close"></button>
+                                    <h2 class="modal-title" id="modalLabel">Login</h2>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                   
+                                    <!-- Aquí puedes agregar el formulario de login -->
                                 </div>
                                 <div class="modal-footer">
                                     <button class="btn btn-primary" type="submit">
                                         <i class="bi bi-plus-circle-fill"></i> Registrar Cliente
                                     </button>
-                                    <button data-bs-dismiss="modal" type="button"
-                                        class="btn btn-danger">Cerrar</button>
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
                                 </div>
                                 <div class="text-center mt-3">
                                     <a href="#">¿No tienes cuenta? Regístrate aquí</a>
@@ -75,6 +76,7 @@
                             </div>
                         </div>
                     </div>
+
 
 
 
