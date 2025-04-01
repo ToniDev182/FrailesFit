@@ -6,7 +6,7 @@
 .nosotros {
     display: grid;
     
-    @include m.background-image('../../build/img/Maquinas10.avif');
+    @include m.background-image('https://i.postimg.cc/3x8h2z4q/img-32.jpg');
     background-repeat: no-repeat;
     background-position: right top;
     grid-template-rows: repeat(2, 1fr);
