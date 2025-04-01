@@ -1,29 +1,30 @@
-const loadComponent = (id, url) => { // vamos a hacer una funcion para cargar un componente. 
+const loadComponent = (id, url) => { // vamos a hacer una función para cargar un componente.
 
-    // window.locaticon para la pagina atual, pathname coge el paz y verificca si incluye src/pages, si es asi hacemos una ternaria para verificar que se cumple la condicion S si es asi, añadimos ../../ para poder cargar los componentes 
+    // window.location para la página actual, pathname coge el path y verifica si incluye src/pages, 
+    // si es así hacemos una ternaria para verificar que se cumple la condición. 
+    // Si se cumple, añadimos "../../" para poder cargar los componentes correctamente.
     let basePath = window.location.pathname.includes("/src/pages/") ? "../../" : "";
     const element = document.getElementById(id); // selector del id del componente
 
-    if (!element) { // si no existe no hacemos nada
-        return;
+    if (!element || element.innerHTML.trim() !== "") { 
+        return; // Si el elemento no existe o ya tiene contenido, no hacemos nada.
     }
 
-    fetch(basePath + url) // concadenamos el resultado de nuestra ruta base con la url, de esta manera si cargamos contacto.html por ejemplo e intentamos cargar el header la ruta seria la correcta
+    fetch(basePath + url) // concatenamos el resultado de nuestra ruta base con la url, 
+        // de esta manera si cargamos contacto.html por ejemplo e intentamos cargar el header, la ruta será la correcta
         .then(response => response.ok ? response.text() : Promise.reject(`Error al cargar ${url}: ${response.statusText}`))
         .then(html => element.innerHTML = html)
         .catch(error => console.error(error));
 
-    // si la respuesta es correcta obtendremos la misma pasada a texto, si no se rechaza la promesa y se muestra un error 
+    // Si la respuesta es correcta, obtendremos la misma pasada a texto.
+    // Si no, se rechaza la promesa y se muestra un error.
 
-    // .then(html => element.innerHTML = html) insertamos el componente en el html
+    // .then(html => element.innerHTML = html) inserta el componente en el HTML.
 };
 
-document.addEventListener("DOMContentLoaded", () => { // El codigo se dispara cuando la pagina a cargado correctamente
+document.addEventListener("DOMContentLoaded", () => { // El código se ejecuta cuando la página ha cargado correctamente.
 
-    // nuestro array de componentes con su id y su Url
-
-
-
+    // Nuestro array de componentes con su id y su URL.
     [
         { id: "header", url: "src/components/header.html" },
         { id: "servicios", url: "src/components/servicios.html" },
@@ -40,6 +41,6 @@ document.addEventListener("DOMContentLoaded", () => { // El codigo se dispara cu
         { id: "muro", url: "src/components/muro.html" },
         { id: "merch", url: "src/components/merch.html" },
         { id: "suple", url: "src/components/suple.html" },
-    ].forEach(({ id, url }) => loadComponent(id, url));  // recorremos cada a elemento del array y llamamos a loadcomponent, haciendo una solicitud para cada uno de ellos, si es exitosa se carga el elemento dentro del DOM
+    ].forEach(({ id, url }) => loadComponent(id, url)); // Recorremos cada elemento del array y llamamos a loadComponent, 
+    // haciendo una solicitud para cada uno de ellos. Si es exitosa, se carga el elemento dentro del DOM.
 });
- 
