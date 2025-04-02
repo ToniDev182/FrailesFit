@@ -2,73 +2,64 @@ const { src, dest, watch, series, parallel } = require('gulp');
 const sass = require('gulp-sass')(require('sass'));
 const purgecss = require('gulp-purgecss');
 const rename = require('gulp-rename');
-const imagemin = require('gulp-imagemin');
 
-// 1) COMPILE SASS => build/src/css/app.css
+// 1) COMPILAR SASS => genera build/src/css/app.css
 function compileSass() {
   return src('src/scss/app.scss')
     .pipe(sass({ outputStyle: 'expanded' }).on('error', sass.logError))
     .pipe(dest('build/src/css'));
 }
 
-// 2) OPTIMIZE IMAGES => build/src/img
-function optimizeImages() {
-  return src('src/img/**/*')
-    .pipe(imagemin({ optimizationLevel: 3 }))
-    .pipe(dest('build/src/img'));
-}
-
-// 3) COPY HTML
+// 2) COPIAR ARCHIVOS HTML
 function copyHtml() {
-  // Copiar solo index.html en build/
+  // Copiar index.html en la carpeta build/
   src('index.html')
     .pipe(dest('build'));
 
-  // Copiar el resto de los HTML en build/src/pages/
+  // Copiar el resto de archivos HTML en build/src/pages/
   return src(['src/**/*.html'])
     .pipe(dest('build/src'));
 }
 
-// 4) COPY JS + JSON => build/js
+// 3) COPIAR ARCHIVOS JS Y JSON => genera build/js
 function copyJs() {
-  return src('js/**/*.{js,json}') // Incluye tanto .js como .json
+  return src('js/**/*.{js,json}') // Copia tanto archivos .js como .json
     .pipe(dest('build/js'));
 }
 
-// 5) PURGE + MINIFY CSS => build/src/css/app.min.css
+// 4) PURGAR Y MINIFICAR CSS => genera build/src/css/app.min.css
 function minifyCss() {
   return src('build/src/css/app.css')
     .pipe(
       purgecss({
         content: [
-          'build/**/*.html',
-          'build/src/js/**/*.js'
+          'build/**/*.html', // Analiza los archivos HTML para eliminar CSS no utilizado
+          'build/src/js/**/*.js' // También revisa los archivos JS por clases CSS usadas
         ]
       })
     )
-    .pipe(rename({ suffix: '.min' }))
+    .pipe(rename({ suffix: '.min' })) // Renombra el archivo a app.min.css
     .pipe(dest('build/src/css'));
 }
 
 // ----------------------
-// DEVELOPMENT WORKFLOW
+// FLUJO DE DESARROLLO
 // ----------------------
 function dev() {
-  watch('src/scss/**/*.scss', compileSass);
-  watch('src/img/**/*', optimizeImages);
-  watch(['index.html', 'src/**/*.html'], copyHtml);
-  watch('js/**/*.js', copyJs);
+  watch('src/scss/**/*.scss', compileSass); // Vigila cambios en los archivos SCSS y recompila
+  watch(['index.html', 'src/**/*.html'], copyHtml); // Vigila cambios en HTML y los copia
+  watch('js/**/*.js', copyJs); // Vigila cambios en JS y los copia
 }
 
 // ----------------------
-// BUILD TASKS
+// TAREAS DE COMPILACIÓN
 // ----------------------
 exports.build = series(
-  parallel(optimizeImages, compileSass, copyHtml, copyJs),
-  minifyCss
+  parallel(compileSass, copyHtml, copyJs), // Ejecuta las tareas en paralelo
+  minifyCss // Luego minifica el CSS
 );
 
 exports.default = series(
-  parallel(optimizeImages, compileSass, copyHtml, copyJs),
-  dev
+  parallel(compileSass, copyHtml, copyJs), // Ejecuta las tareas en paralelo
+  dev // Inicia el modo desarrollo con vigilancia de cambios
 );
