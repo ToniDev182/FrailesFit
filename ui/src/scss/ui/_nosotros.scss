@@ -8,7 +8,7 @@
     
     @include m.background-image('https://i.postimg.cc/3x8h2z4q/img-32.jpg');
     background-repeat: no-repeat;
-    background-position: right top;
+    background-position: 80% 10%;
     grid-template-rows: repeat(2, 1fr);
 
     @media (min-width: 992px) {
