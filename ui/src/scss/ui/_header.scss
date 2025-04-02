@@ -96,4 +96,19 @@ body {
             color: $verde;
         }
     }
+
+
+    .heading-data {
+        .telefono, .correo {
+            font-size: 1.2rem ; 
+        }
+    
+  
+        @media (max-width: 767px) {
+            .telefono, .correo {
+                font-size: 0.6rem ; 
+            }
+        }
+    }
+    
 }
