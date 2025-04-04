@@ -1,0 +1,42 @@
+@use '../custom' as *;
+
+.login {
+    border: 1px solid $verde;
+    border-radius: 5rem;
+    background-color: #77777727;
+}
+
+.headerForm,
+.credenciales {
+    color: $verde;
+}
+
+.credenciales{
+
+    &:hover{
+        color: $white;
+    }
+}
+
+.label-title {
+    color: $white;
+}
+
+.login-logo {
+    max-width: 150px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.login-btn {
+    background-color: $verde;
+    color: $white;
+
+    &:hover {
+        background-color: $white;
+        color: $verde;
+        border: 1px solid $verde;
+       
+    }
+}
