@@ -1,0 +1,43 @@
+<section id="log" class="row justify-content-center login-section">
+    <div class="col-md-6 h-100 login">
+        <form class="needs-validation p-4 shadow formulario" novalidate>
+            <fieldset>
+                <legend class="text-center fs-2 fw-bold py-2 rounded headerForm"><img class="img-fluid login-logo" src="https://i.postimg.cc/HnxRPCmZ/FrailesFitLogo.png" alt="logo"></legend>
+
+                <div class="mb-3">
+                    <label class="label-title form-label fw-bold" for="email">Email:</label>
+                    <input type="email" class="form-control p-3 fs-4 border border-secondary formulario-input"
+                        id="email" placeholder="Tu email" required>
+                    <span class="invalid-feedback">Introduce un email válido.</span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="label-title form-label fw-bold" for="password">Contraseña:</label>
+                    <input type="password" class="form-control p-3 fs-4 border border-secondary formulario-input"
+                        id="password" placeholder="Tu contraseña" required>
+                    <span class="invalid-feedback">Introduce tu contraseña.</span>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input formulario-input" id="recordarSesion">
+                    <label class="form-check-label fw-bold text-white" for="recordarSesion">
+                        Recuérdame
+                    </label>
+                </div>
+            </fieldset>
+
+            <div class="d-flex justify-content-center gap-3">
+                <input class="btn formBtn login-btn fw-bold px-2 mt-2 py-2" type="submit" value="Iniciar Sesión">
+                
+                <a href="/index.html" class="btn login-btn fw-bold px-2 mt-2 py-2">Volver al Inicio</a>
+            </div>
+            
+            
+
+            <div class="text-center mt-3">
+                <a class="enlace text-decoration-none credenciales fw-bold" href="#">¿Olvidaste tu contraseña?</a> | 
+                <a class="enlace text-decoration-none credenciales fw-bold" href="../pages/registro.html">Registrarse</a>
+            </div>
+        </form>
+    </div>
+</section>
