@@ -111,4 +111,21 @@ body {
         }
     }
     
+    .user-cart-bar {
+
+        background-color: #4950578f;
+        border-radius: 5rem;
+
+        .fa-shopping-cart{
+            color: $verde;
+        }
+    }
+
+    .logout{
+        background-color: $verde;
+        font-size: 0.8rem;
+        color: $white;
+        font-weight: bold;
+
+    }
 }
