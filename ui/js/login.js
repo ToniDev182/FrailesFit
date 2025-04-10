@@ -34,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {  // se asegura que el codi
             localStorage.setItem('usuario', JSON.stringify({
               nombre: data.nombre,
               email: data.email,
-              estado: data.estado,
               tipoUsuario: data.tipoUsuario,
             }));
 
@@ -49,8 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {  // se asegura que el codi
           alert('Hubo un error en el servidor. Intenta de nuevo más tarde.');
         }
       });
-    } else {
-      console.log('Formulario no encontrado'); // pasa saber si el formlario se ha cargado denro del DoM
     }
 
     // Mostrar nombre del usuario en el header si está logueado
@@ -61,6 +58,16 @@ document.addEventListener('DOMContentLoaded', () => {  // se asegura que el codi
       if (usernameElement) {
         usernameElement.textContent = userData.nombre; // Establecer el nombre del usuario en el header
       }
+
+      const tipoUsuarioNumber = Number(userData.tipoUsuario);
+
+      if (tipoUsuarioNumber === 0) {
+        const adminBtn = document.getElementById('admin-panel-btn');
+        if (adminBtn) {
+          adminBtn.classList.remove('d-none');
+        }
+      }
+
     } else {
       console.log('No se encontró el usuario en localStorage');
     }
@@ -78,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {  // se asegura que el codi
         if (usernameElement) {
           usernameElement.textContent = 'Usuario'; // Volver al estado original
         }
+        window.location.reload();
       });
     }
   }, 100);

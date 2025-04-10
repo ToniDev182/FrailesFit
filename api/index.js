@@ -7,6 +7,8 @@ const nodemailer = require('nodemailer'); // Para enviar correos
 const cors = require('cors'); // Para comunicar front y back aunque esten en dominios distintos 
 const bcrypt = require('bcrypt'); // Para encriptar contraseñas
 require('dotenv').config({ path: 'local.env' }); // para usar variables de entorno
+const { v4: uuidv4 } = require('uuid');
+
 
 
 
@@ -37,7 +39,7 @@ const dynamoDB = new AWS.DynamoDB.DocumentClient(); // creamos un cliente que no
 // backend/index.js
 app.get('/api/google-maps-key', (req, res) => {
     console.log('Recibiendo solicitud para la clave de Google Maps');
-    res.json({ apiKey: process.env.GOOGLE_MAPS_API_KEY});
+    res.json({ apiKey: process.env.GOOGLE_MAPS_API_KEY });
 });
 
 
@@ -57,68 +59,162 @@ app.get('/users', async (req, res) => { // Peticion tipo get con una solicitud(r
     }
 });
 
+// Eliminar un usuario
+app.delete('/users/:email', async (req, res) => {
+    const { email } = req.params; // Obtenemos el email del parámetro de la URL
+
+    const params = {
+        TableName: 'usuarios',
+        Key: {
+            email: email, // Usamos el email como clave primaria
+        },
+    };
+
+    try {
+        await dynamoDB.delete(params).promise(); // Eliminamos el usuario de la base de datos
+        res.status(200).json({ message: 'Usuario eliminado correctamente' });
+    } catch (error) {
+        console.error('Error al eliminar el usuario:', error);
+        res.status(500).json({ error: 'No se pudo eliminar el usuario' });
+    }
+});
+
+
+
+// Actualizar usuario
+app.put('/users/:email', async (req, res) => {
+    const email = req.params.email;
+    const updatedUser = req.body; // Datos del usuario actualizado
+
+    const params = {
+        TableName: 'usuarios',
+        Key: { email }, // La clave primaria es el email
+        UpdateExpression: 'set #nombre = :nombre, #apellidos = :apellidos, #direccion = :direccion, #telefono = :telefono, #dni = :dni, #edad = :edad, #tipoUsuario = :tipoUsuario',
+        ExpressionAttributeNames: {
+            '#nombre': 'nombre',
+            '#apellidos': 'apellidos',  // Añadido
+            '#direccion': 'direccion',
+            '#telefono': 'telefono',
+            '#dni': 'dni',
+            '#edad': 'edad',
+            '#tipoUsuario': 'tipoUsuario',
+        },
+        ExpressionAttributeValues: {
+            ':nombre': updatedUser.nombre,
+            ':apellidos': updatedUser.apellidos,  // Añadido
+            ':direccion': updatedUser.direccion,
+            ':telefono': updatedUser.telefono,
+            ':dni': updatedUser.dni,
+            ':edad': updatedUser.edad,
+            ':tipoUsuario': updatedUser.tipoUsuario,
+        },
+        ReturnValues: 'ALL_NEW', // Devuelve todos los atributos del usuario actualizado
+    };
+
+    try {
+        const result = await dynamoDB.update(params).promise(); // Actualizar el usuario en la base de datos
+        res.json(result.Attributes); // Devolver el usuario actualizado
+    } catch (error) {
+        console.error('Error al actualizar el usuario:', error);
+        res.status(500).json({ error: 'No se pudo actualizar el usuario' });
+    }
+});
 
 
 
 // Registro de nuevo usuario
-app.post('/register', async (req, res) => { // peticion tipo post
-    const { nombre, direccion, telefono, dni, edad, email, password } = req.body; // hacemos destructurin del cuerpo  de la solucitud
+app.post('/register', async (req, res) => {
+    const { nombre, apellidos, direccion, telefono, dni, edad, email, password } = req.body;
+
+    // Validación de campos obligatorios
+    if (!email || !nombre || !apellidos || !direccion || !telefono || !dni || !edad || !password) {
+        return res.status(400).json({ message: 'Faltan campos obligatorios (email, nombre, apellidos, etc.)' });
+    }
 
     if (!password || password.length < 6) {  // pedimos que la contraseña tenga almenos 6 caracteres
         return res.status(400).json({ message: 'La contraseña debe tener al menos 6 caracteres.' });
     }
 
     try {
-        const hashedPassword = await bcrypt.hash(password, 10); // encriptamos la contraseña , 10 concretamente es el numero de veces que lo hacemos , usamos await para esperar a que termine la encriptacion
+        const hashedPassword = await bcrypt.hash(password, 10); // encriptamos la contraseña
 
         const newUser = { // se crea el objeto nuevo usuario con los datos del usuario
             TableName: 'usuarios',
             Item: {
-                email,                // Email como clave primaria
+                email,
                 nombre,
+                apellidos,
                 direccion,
                 telefono,
                 dni,
                 edad,
                 password: hashedPassword,
-                tipoUsuario: 1,       // No validado
-                estado: 'no cobrado', // Estado inicial
-                createdAt: new Date().toISOString(), // fecha de creacion
+                tipoUsuario: 1,  // No validado
+                createdAt: new Date().toISOString(),  // Fecha de creación
             },
         };
 
-        await dynamoDB.put(newUser).promise(); // con put añadimos el nuevo usuario a la base de datos una promesa que espera a que la operacion termine antes de seguir con el flujo
+        await dynamoDB.put(newUser).promise(); // guardamos el usuario en la base de datos
 
-        const transporter = nodemailer.createTransport({ // esta es una fucion proporcionada por la libreria que crea una instancia que conecta un servicio de correo electronico  para enviar correos
+        // Añadimos el pago base en la tabla PagosUsuarios
+        const fechaActual = new Date();
+        const nombreMes = fechaActual.toLocaleString('es-ES', { month: 'long' }); // abril, mayo, etc.
+        const anioActual = fechaActual.getFullYear();
+        const numeroMes = fechaActual.getMonth() + 1; // enero = 0, así que sumamos 1
+        const mesAnio = `${anioActual}-${String(numeroMes).padStart(2, '0')}`; // Ejemplo: 2025-04
+
+        const nuevoPago = {
+            TableName: 'Pagos',
+            Item: {
+                email,
+                mes_anio: mesAnio,         // <-- Aquí añadimos la Sort Key
+                nombre,
+                apellidos,
+                mes: nombreMes,
+                anio: anioActual,
+                estado: 'no pagado',
+                fechaPago: '',
+                cantidad: '',
+                metodo: ''
+            }
+        };
+
+        await dynamoDB.put(nuevoPago).promise(); // Guardamos el pago inicial
+
+        // Envío de correo de confirmación
+        const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: process.env.EMAIL_USER, // credenciales de google
+                user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS,
             },
         });
 
         const mailOptions = {
-            from: process.env.EMAIL_USER, // nuestro correo
-            to: email, // envia al correo ingresado por el usuario
-            subject: 'Confirma tu registro en FrailesFit', // un correo con el siguiente asunto
-            html: ` y el siguiente cuerpo
-        <p>Hola ${nombre},</p>
-        <p>Gracias por registrarte en FrailesFit. Por favor, confirma tu cuenta haciendo clic en el siguiente enlace:</p>
-        <a href="http://${process.env.API_DOMAIN || 'localhost:3000'}/confirm/${email}">Confirmar cuenta</a>
-      `,
+            from: `"FrailesFit" <${process.env.EMAIL_USER}>`,
+            to: email,
+            subject: 'Confirma tu registro en FrailesFit',
+            text: `Hola ${nombre},\n\nGracias por registrarte en FrailesFit.\n\nConfirma tu cuenta haciendo clic en el siguiente enlace:\nhttp://${process.env.API_DOMAIN || 'localhost:3000'}/confirm/${email}\n\nSi no has solicitado este registro, puedes ignorar este mensaje.\n\nUn saludo,\nEl equipo de FrailesFit`,
+            html: `
+                <p>Hola ${nombre},</p>
+                <p>Gracias por registrarte en <strong>FrailesFit</strong>.</p>
+                <p>Confirma tu cuenta haciendo clic en el siguiente enlace:</p>
+                <p><a href="http://${process.env.API_DOMAIN || 'localhost:3000'}/confirm/${email}">Confirmar cuenta</a></p>
+                <p>Si no solicitaste este registro, puedes ignorar este mensaje.</p>
+                <p style="color: gray;">Un saludo,<br>El equipo de FrailesFit</p>
+            `,
         };
 
-        transporter.sendMail(mailOptions, (error, info) => { // sendmail es un metodo para enviar un email (mailoptions es el cuerpo de nuestro email, ) (error ,info) es una funcion de callback que se ejecuta cuando el intento de envio a terminado 
-
+        transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.error('Error al enviar el correo:', error);
-                return res.status(500).json({ message: 'Error al enviar el correo de confirmación.' });// respuesta error 500 + mensaje 
+                return res.status(500).json({ message: 'Error al enviar el correo de confirmación.' });
             }
-            res.status(200).json({ message: 'Registro exitoso. Revisa tu correo para confirmar tu cuenta.' });// su hubo exito respuesta 200 + mensaje 
+            res.status(200).json({ message: 'Registro exitoso. Revisa tu correo para confirmar tu cuenta.' });
         });
     } catch (error) {
         console.error('Error al registrar:', error);
-        res.status(500).json({ message: 'Hubo un problema al registrar el usuario.' }); // capturamos errores desde el hash de la contraseña (internal server error)
+        res.status(500).json({ message: 'Hubo un problema al registrar el usuario.' });
     }
 });
 
@@ -176,8 +272,9 @@ app.post('/login', async (req, res) => {  // endPoit de tipo post donde vamos a 
         if (!user) { // mensaje cuando no se encuentra un usuario
             return res.status(401).json({ message: 'Usuario no encontrado.' }); // 401 , no autorizado
         }
+        const tipoUsuario = Number(user.tipoUsuario);
 
-        if (user.tipoUsuario !== 2) { // cuando el tipo de usuario es diferente a 2
+        if (tipoUsuario !== 2 && tipoUsuario !== 0) {
             return res.status(401).json({ message: 'Cuenta no confirmada.' });
         }
 
@@ -192,7 +289,6 @@ app.post('/login', async (req, res) => {  // endPoit de tipo post donde vamos a 
             message: 'Inicio de sesión exitoso.',
             nombre: user.nombre,
             email: user.email,
-            estado: user.estado,
             tipoUsuario: user.tipoUsuario,
         });
 
@@ -201,6 +297,155 @@ app.post('/login', async (req, res) => {  // endPoit de tipo post donde vamos a 
         res.status(500).json({ message: 'Error en el servidor.' });
     }
 });
+
+
+
+// pagos 
+app.get('/api/pagos', async (req, res) => {
+    const params = {
+        TableName: 'Pagos',
+    };
+
+    try {
+        const result = await dynamoDB.scan(params).promise();
+        res.json(result.Items); // Devuelve todos los pagos como JSON
+    } catch (error) {
+        console.error('Error al obtener pagos:', error);
+        res.status(500).json({ message: 'Error al obtener los pagos' });
+    }
+});
+
+
+// actualizar un pago
+app.put('/api/pagos/:email/:mes_anio', async (req, res) => {
+    const email = req.params.email;
+    const mes_anio = req.params.mes_anio; // Ej: '2025-04'
+    const updatedData = req.body;
+
+    const updateParams = {
+        TableName: 'Pagos',
+        Key: {
+            email: email,
+            mes_anio: mes_anio
+        },
+        UpdateExpression: 'set mes = :mes, anio = :anio, estado = :estado, fechaPago = :fechaPago, cantidad = :cantidad, metodo = :metodo',
+        ExpressionAttributeValues: {
+            ':mes': updatedData.mes,
+            ':anio': updatedData.anio,
+            ':estado': updatedData.estado,
+            ':fechaPago': updatedData.fechaPago,
+            ':cantidad': updatedData.cantidad,
+            ':metodo': updatedData.metodo,
+        },
+        ReturnValues: 'UPDATED_NEW',
+    };
+
+    try {
+        const result = await dynamoDB.update(updateParams).promise();
+        res.json({ message: 'Pago actualizado correctamente', updatedAttributes: result.Attributes });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al actualizar el pago', error: error.message });
+    }
+});
+
+
+// borrar un pago
+app.delete('/api/pagos/:email/:mes_anio', async (req, res) => {
+    const { email, mes_anio } = req.params;
+
+    const deleteParams = {
+        TableName: 'Pagos',
+        Key: {
+            email,
+            mes_anio
+        },
+    };
+
+    try {
+        await dynamoDB.delete(deleteParams).promise();
+        console.log(`Pago eliminado: ${email}, ${mes_anio}`);
+        res.json({ message: 'Pago eliminado correctamente' });
+    } catch (error) {
+        console.error('Error al eliminar el pago:', error.message);
+        res.status(500).json({ message: 'Error al eliminar el pago', error: error.message });
+    }
+});
+
+
+// Ruta para guardar un nuevo pago
+app.post('/api/pagos/nuevo', async (req, res) => {
+    const { email, nombre, apellidos, mes, anio, cantidad, fechaPago, estado, metodo } = req.body;
+
+    // Verificación de campos obligatorios
+    if (!email || !mes || !anio) {
+        return res.status(400).json({ message: 'Faltan campos obligatorios (email, mes o año)' });
+    }
+
+    // Generación del campo mes_anio
+    const mes_anio = `${anio}-${String(mes).padStart(2, '0')}`;
+
+    // Datos para almacenar en DynamoDB
+    const newPago = {
+        TableName: 'Pagos',  // Nombre de tu tabla en DynamoDB
+        Item: {
+            email: email,
+            nombre: nombre,
+            apellidos: apellidos,
+            mes: mes,
+            anio: anio,
+            cantidad: cantidad,
+            fechaPago: fechaPago,
+            estado: estado || 'no pagado',  // Si no se especifica el estado, se asume 'no pagado'
+            mes_anio: mes_anio,
+            metodo: metodo,
+        }
+    };
+
+    try {
+        // Guardar el pago en DynamoDB
+        await dynamoDB.put(newPago).promise();
+
+        // Responder con éxito
+        res.status(200).json({ message: 'Nuevo pago creado correctamente' });
+    } catch (error) {
+        console.error('Error al guardar el pago en DynamoDB:', error);
+        res.status(500).json({ message: 'Hubo un error al guardar el pago en la base de datos.' });
+    }
+});
+
+
+
+
+
+// Ruta para añadir un ejercicio
+app.post('/ejercicios', async (req, res) => {
+    const { nombre, imagenUrl, grupoMuscular } = req.body;
+
+    // Genera un ejercicioId único
+    const ejercicioId = `${grupoMuscular.toLowerCase()}-${uuidv4()}`;
+
+    const params = {
+        TableName: 'Ejercicios',
+        Item: {
+            ejercicioId,
+            nombre,
+            imagenUrl,
+            grupoMuscular,
+            repeticiones: "",  // Campo vacío
+            observaciones: ""  // Campo vacío
+        },
+    };
+
+    try {
+        // Realiza la operación de inserción en DynamoDB con el SDK v2
+        await dynamoDB.put(params).promise();
+        res.status(200).json({ message: 'Ejercicio añadido exitosamente', ejercicioId });
+    } catch (error) {
+        console.error('Error añadiendo ejercicio:', error);
+        res.status(500).json({ error: 'Error al añadir el ejercicio' });
+    }
+});
+
 
 
 // Iniciar servidor, esto arranca el servidor express y lo pone a escuchar peticiones Http
