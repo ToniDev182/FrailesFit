@@ -3,13 +3,24 @@
 
         <!-- Barra de usuario y carrito -->
         <div class="user-cart-bar d-flex justify-content-between my-4 align-items-center py-2 text-white">
-            <span class="user-name ms-3">Bienvenido, <span id="username">Usuario</span>
-            <button id="logout-btn" class="btn logout ms-3">Cerrar sesión</button></span>
-            <!-- Botón para cerrar sesión -->
-           
-            <a href="/src/pages/carrito.html" class="cart-icon me-3">
-                <i class="fas fa-shopping-cart"></i>
-            </a>
+            <span class="user-name ms-3">Bienvenido,
+                <span id="username">Usuario</span>
+
+                <button id="logout-btn" class="btn logout ms-3">Cerrar sesión</button>
+            </span>
+
+            <span class="d-flex align-items-center">
+                <!-- Botón para el panel de administración -->
+                <a href="/src/pages/panelAdmin.html" id="admin-panel-btn"
+                    class="admin-panel-btn text-warning me-3 d-none" title="Panel de administración">
+                    <i class="bi bi-gear-fill fs-4"></i>
+                </a>
+
+                <!-- Icono de carrito -->
+                <a href="/src/pages/carrito.html" class="cart-icon me-3">
+                    <i class="fas fa-shopping-cart"></i>
+                </a>
+            </span>
         </div>
 
         <nav class="navbar justify-content-between navbar-expand-lg navbar-dark slide">
