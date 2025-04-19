@@ -414,7 +414,7 @@ app.post('/api/pagos/nuevo', async (req, res) => {
 });
 
 
-
+/////////////////////// Ejercios (Rutinas) ///////////////////////
 
 
 // Ruta para añadir un ejercicio
@@ -445,6 +445,84 @@ app.post('/ejercicios', async (req, res) => {
         res.status(500).json({ error: 'Error al añadir el ejercicio' });
     }
 });
+
+
+
+// Ruta para obtener todos los ejercicios
+app.get('/ejercicios', async (req, res) => {
+    const params = {
+        TableName: 'Ejercicios',
+    };
+
+    try {
+        const data = await dynamoDB.scan(params).promise();
+        res.status(200).json({
+            message: 'Ejercicios obtenidos correctamente',
+            ejercicios: data.Items,
+        });
+    } catch (error) {
+        console.error('Error obteniendo ejercicios:', error);
+        res.status(500).json({ error: 'Error al obtener los ejercicios' });
+    }
+});
+
+
+// Endpoint para guardar la rutina
+app.post('/rutinas', async (req, res) => {
+    const { email, nombre, rutina } = req.body;
+
+
+    if (!email || !rutina || !nombre) {
+        return res.status(400).json({ error: "El email, nombre y rutina son obligatorios" });
+    }
+
+    const params = {
+        TableName: "Rutinas",
+        Item: {
+            email: email,
+            nombre: nombre,
+            rutina: rutina,
+            ultimaActualizacion: new Date().toISOString(),
+        },
+    };
+
+    try {
+        await dynamoDB.put(params).promise();
+        res.status(200).json({ message: "Rutina guardada correctamente" });
+    } catch (error) {
+        console.error("Error al guardar la rutina:", error);
+        res.status(500).json({ error: "Hubo un error al guardar la rutina" });
+    }
+});
+
+// Endpoint para obtener la rutina por correo
+app.get('/rutinas/:email', async (req, res) => {
+    const { email } = req.params;
+  
+    const params = {
+      TableName: 'Rutinas',
+      Key: { email }
+    };
+  
+    try {
+      const data = await dynamoDB.get(params).promise();
+  
+      if (data.Item && data.Item.rutina) {
+       
+        res.status(200).json({
+          nombre: data.Item.nombre || '',
+          ultimaActualizacion: data.Item.ultimaActualizacion || '',
+          rutina: data.Item.rutina
+        });
+      } else {
+        res.status(404).json({ error: 'No se encontró la rutina para este usuario' });
+      }
+    } catch (error) {
+      console.error('Error obteniendo la rutina:', error);
+      res.status(500).json({ error: 'Hubo un error al obtener la rutina' });
+    }
+  });
+  
 
 
 

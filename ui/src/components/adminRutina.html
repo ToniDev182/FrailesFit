@@ -1,0 +1,68 @@
+<section id="adminRutina" class="container my-5">
+    <div class="container mt-5">
+        <h2 class="text-center galeriaHeader mb-4">Crear Rutina</h2>
+
+        <!-- Filtro por grupo muscular -->
+        <div class="mb-4">
+            <label for="filtroGrupo" class="form-label galeriaHeader">Filtrar por grupo muscular</label>
+            <select id="filtroGrupo" class="form-select">
+                <option value="Todos">Todos</option>
+                <option value="Antebrazo">Antebrazo</option>
+                <option value="Abdominales">Abdominales</option>
+                <option value="Biceps">Bíceps</option>
+                <option value="Espalda">Espalda</option>
+                <option value="Hombro">Hombro</option>
+                <option value="Pecho">Pecho</option>
+                <option value="Pierna">Pierna</option>
+                <option value="Triceps">Tríceps</option>
+            </select>
+        </div>
+
+        <!-- Lista de ejercicios -->
+        <div id="listaEjercicios" class="row g-3"></div>
+
+        <!-- Rutina por días -->
+        <h4 class="mt-5 galeriaHeader">Rutina actual</h4>
+
+        <!-- Días de la semana -->
+        <div id="diasRutina" class="mb-4">
+            <div class="mb-3">
+                <label for="lunes" class="form-label galeriaHeader">Lunes</label>
+                <ul id="lunes" class="list-group"></ul>
+            </div>
+            <div class="mb-3">
+                <label for="martes" class="form-label galeriaHeader">Martes</label>
+                <ul id="martes" class="list-group"></ul>
+            </div>
+            <div class="mb-3">
+                <label for="miercoles" class="form-label galeriaHeader">Miércoles</label>
+                <ul id="miercoles" class="list-group"></ul>
+            </div>
+            <div class="mb-3">
+                <label for="jueves" class="form-label galeriaHeader">Jueves</label>
+                <ul id="jueves" class="list-group"></ul>
+            </div>
+            <div class="mb-3">
+                <label for="viernes" class="form-label galeriaHeader">Viernes</label>
+                <ul id="viernes" class="list-group"></ul>
+            </div>
+        </div>
+
+        <!-- Guardar rutina -->
+        <div class="mb-4">
+            <label for="emailUsuario" class="form-label galeriaHeader">Correo del usuario</label>
+            <select id="emailUsuario" class="form-select mb-2">
+                <option value="" disabled selected>Selecciona un usuario</option>
+                <!-- Los correos se añadirán dinámicamente aquí -->
+            </select>
+            <label for="nombreRutina" class="form-label galeriaHeader">Nombre de la rutina</label>
+            <input type="text" class="form-control mb-3" id="nombreRutina" placeholder="Ej: Rutina fuerza abril">
+            <button class="btn btn-primary" id="guardarRutina">Guardar rutina</button>
+        </div>
+    </div>
+    <div class="d-flex justify-content-center mb-4">
+        <a href="panelAdmin.html" class="btn btn-secondary btn-lg">
+            <i class="fas fa-arrow-left"></i> Volver al Panel
+        </a>
+    </div>
+</section>

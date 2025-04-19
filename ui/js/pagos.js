@@ -199,8 +199,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
     } catch (error) {
-        console.error('Error al cargar los pagos:', error);
-        alert('Hubo un error al cargar los pagos.');
+       
     }
 });
 
