@@ -1,0 +1,90 @@
+@use '../base/mixins' as m;
+@use '../custom' as *;
+
+
+.cart-item {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    background-color: #fff; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 5px; 
+    border-radius: 5px; 
+}
+
+
+.cart-item p {
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+
+.eliminar-producto {
+    background-color: transparent;
+    border: none;
+    color: red;
+    font-size: 18px;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+
+.eliminar-producto:hover {
+    color: darkred;
+}
+
+
+.cart-items {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 10px 0;
+}
+
+/* Estilo para la imagen dentro del carrito */
+.cart-item-content {
+    display: flex;
+    align-items: center;
+}
+
+.cart-item-img {
+    width: 30px; /* Ancho pequeño */
+    height: auto;
+    margin-right: 10px;
+    border-radius: 5px; /* Bordes redondeados */
+}
+
+/* Estilo para el contenedor del carrito */
+.cart-items {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 10px 0;
+}
+
+
+    /* Elimina el subrayado del enlace dentro del dropdown específico del carrito */
+    .carrito .dropdown-toggle {
+        text-decoration: none;
+        border: none;
+
+        &::after {
+            color: $verde;
+            font-size: 1.5rem;
+
+        }
+    }
+
+
+    .cart-total {
+        background-color: $white;
+        border-radius: 0.75rem;
+        padding: 1rem;
+        margin-top: 1rem;
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.1rem;
+       
+    }

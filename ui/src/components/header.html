@@ -16,12 +16,27 @@
                     <i class="bi bi-gear-fill fs-4"></i>
                 </a>
 
-                <!-- Icono de carrito -->
-                <a href="/src/pages/carrito.html" class="cart-icon me-3">
-                    <i class="fas fa-shopping-cart"></i>
-                </a>
+                <!-- Icono del carrito (usando Dropdown de Bootstrap) -->
+                <div class="dropdown carrito">
+                    <button class="btn btn-link cart-icon me-3 dropdown-toggle" type="button" id="cartDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span id="cart-count" class="badge bg-warning">0</span> <!-- Contador de elementos -->
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="cartDropdown">
+                        <li>
+                            <div class="cart-items">
+                                <!-- Aquí se añadirán los productos -->
+                            </div>
+                        </li>
+                        <li>
+                            <button class="btn logout w-100" id="checkout-btn">Realizar Pedido</button>
+                        </li>
+                    </ul>
+                </div>
             </span>
         </div>
+
 
         <nav class="navbar justify-content-between navbar-expand-lg navbar-dark slide">
             <div class="container-fluid">
@@ -91,8 +106,8 @@
         <div class="heading-data d-flex justify-content-start align-items-end flex-column">
             <a class="telefono text-decoration-none fw-bold text-white" href="tel:626879633"><i
                     class="fas fa-phone-alt"></i> 626-879-633</a>
-            <a class="correo text-decoration-none fw-bold text-white" href="mailto:info@frailesfit.com"><i
-                    class="fas fa-envelope"></i> enriqueatienzaalvarez@gmail.com</a>
+            <a class="correo text-decoration-none fw-bold text-white" href="mailto:frailesfit@gmail.com"><i
+                    class="fas fa-envelope"></i> frailesfit@gmail.com</a>
         </div>
 
     </div>
