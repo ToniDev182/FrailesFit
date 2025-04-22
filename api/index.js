@@ -664,6 +664,74 @@ Sistema de pedidos de FrailesFit
     }
 });
 
+/////////////////////// Envio Formulario ///////////////////////
+
+app.post('/enviar-email', async (req, res) => {
+    const { nombre, email, tel, mensaje, usuarioEmail } = req.body; // Recibimos los datos del formulario
+
+    // Validamos los datos
+    if (!nombre || !email || !mensaje || !usuarioEmail) {
+        return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
+    }
+
+    // Configuración del transporte de correo usando nodemailer
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL_USER, // Usuario de correo electrónico
+            pass: process.env.EMAIL_PASS, // Contraseña o aplicación específica
+        },
+    });
+
+    // Configuración del correo a enviar
+    const mailOptions = {
+        from: `"FrailesFit" <${process.env.EMAIL_USER}>`, // Remitente (tu correo)
+        to: 'frailesfit@gmail.com', // Correo del administrador
+        subject: `Nuevo mensaje de ${nombre}`, // Asunto del correo
+        text: `
+      Se ha recibido un nuevo mensaje desde el formulario de contacto:
+  
+      Nombre: ${nombre}
+      Email: ${email}
+      Teléfono: ${tel}
+      Mensaje: ${mensaje}
+  
+    Email Usuario: ${usuarioEmail} 
+      `,
+    };
+
+    try {
+        // Enviamos el correo al administrador
+        await transporter.sendMail(mailOptions);
+        console.log('Correo enviado al administrador exitosamente.');
+
+        // Correo de confirmación al usuario
+        const mailOptionsCliente = {
+            from: `"FrailesFit" <${process.env.EMAIL_USER}>`,
+            to: email, // Correo del usuario
+            subject: `Confirmación de mensaje recibido - FrailesFit`,
+            text: `
+        Hola ${nombre},
+  
+        Gracias por ponerte en contacto con nosotros. Hemos recibido tu mensaje y nos pondremos en contacto contigo lo antes posible.
+  
+        Un cordial saludo,
+        El equipo de FrailesFit
+        `,
+        };
+
+        // Enviar correo de confirmación al usuario
+        await transporter.sendMail(mailOptionsCliente);
+        console.log('Correo de confirmación enviado al usuario.');
+
+        // Respuesta al frontend indicando que todo fue bien
+        return res.status(200).json({ message: 'Formulario enviado exitosamente.' });
+    } catch (error) {
+        console.error('Error al enviar el correo:', error);
+        return res.status(500).json({ message: 'Hubo un error al enviar el correo. Intenta más tarde.' });
+    }
+});
+
 
 // Iniciar servidor, esto arranca el servidor express y lo pone a escuchar peticiones Http
 app.listen(port, '0.0.0.0', () => { // 0.0.0.0 REPRESENTA todas las interfaces de red disponibles

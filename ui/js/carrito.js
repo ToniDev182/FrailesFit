@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function () { // es ejecutado al c
     let productos = []; // aqui vamos a almacenar los productos que saquemos del json
 
     setTimeout(() => { // pequeño retraso para asegurar que el DOM esté listo
-        fetch('/ui/build/js/suple.json') // hacemos la consulta /ui/build/js/suple.json 
+        fetch('/js/suple.json') // hacemos la consulta /ui/build/js/suple.json 
             .then(response => response.json()) // obtenemos la respuesta
             .then(data => {
                 productos = data; //almacenamos los datos en productos
