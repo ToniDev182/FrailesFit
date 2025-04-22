@@ -3,14 +3,14 @@
 const express = require('express'); // Servidor web
 const bodyParser = require('body-parser'); // Para poder leer los datos JSON que llegan en peticiones post
 const AWS = require('aws-sdk'); // para usar DynamoDB (la base de datos en AWSs)
-const nodemailer = require('nodemailer'); // Para enviar correos
 const cors = require('cors'); // Para comunicar front y back aunque esten en dominios distintos 
 const bcrypt = require('bcrypt'); // Para encriptar contraseñas
 require('dotenv').config({ path: 'local.env' }); // para usar variables de entorno
-const { v4: uuidv4 } = require('uuid');
-
-
-
+const { v4: uuidv4 } = require('uuid'); // Crea un id de forma aleatoria
+const nodemailer = require("nodemailer"); // Para enviar correos
+const PDFDocument = require("pdfkit"); // Es una librería para generar archivos PDF en Node.js.
+const fs = require("fs"); // Es un módulo nativo de Node.js (no tengo que instalarlo) para interactuar con el sistema de archivos. 
+const axios = require('axios'); // Es una librería para hacer peticiones HTTP (GET, POST, PUT, DELETE, etc.). la uso en este caso para meter las imagenes dentro del PDF ya que no estan alojadas localmente.
 
 const app = express(); // crea una instancia del servidor llamada app
 const port = process.env.PORT || 3000; // elegimos la puerta de entrada al servidor
@@ -437,7 +437,7 @@ app.post('/ejercicios', async (req, res) => {
     };
 
     try {
-        // Realiza la operación de inserción en DynamoDB con el SDK v2
+        // Realiza la operación de inserción en DynamoDB 
         await dynamoDB.put(params).promise();
         res.status(200).json({ message: 'Ejercicio añadido exitosamente', ejercicioId });
     } catch (error) {
@@ -498,32 +498,171 @@ app.post('/rutinas', async (req, res) => {
 // Endpoint para obtener la rutina por correo
 app.get('/rutinas/:email', async (req, res) => {
     const { email } = req.params;
-  
-    const params = {
-      TableName: 'Rutinas',
-      Key: { email }
-    };
-  
-    try {
-      const data = await dynamoDB.get(params).promise();
-  
-      if (data.Item && data.Item.rutina) {
-       
-        res.status(200).json({
-          nombre: data.Item.nombre || '',
-          ultimaActualizacion: data.Item.ultimaActualizacion || '',
-          rutina: data.Item.rutina
-        });
-      } else {
-        res.status(404).json({ error: 'No se encontró la rutina para este usuario' });
-      }
-    } catch (error) {
-      console.error('Error obteniendo la rutina:', error);
-      res.status(500).json({ error: 'Hubo un error al obtener la rutina' });
-    }
-  });
-  
 
+    const params = {
+        TableName: 'Rutinas',
+        Key: { email }
+    };
+
+    try {
+        const data = await dynamoDB.get(params).promise();
+
+        if (data.Item && data.Item.rutina) {
+
+            res.status(200).json({
+                nombre: data.Item.nombre || '',
+                ultimaActualizacion: data.Item.ultimaActualizacion || '',
+                rutina: data.Item.rutina
+            });
+        } else {
+            res.status(404).json({ error: 'No se encontró la rutina para este usuario' });
+        }
+    } catch (error) {
+        console.error('Error obteniendo la rutina:', error);
+        res.status(500).json({ error: 'Hubo un error al obtener la rutina' });
+    }
+});
+
+/////////////////////// Envio Carrito ///////////////////////
+
+// Realizar un pedido a numbre de un usuario desde el carrito
+
+app.post('/api/realizar-pedido', async (req, res) => { // Escuchamos  la peticion del front
+
+    const { email, cartItems } = req.body; // Escuchamos los datos recibidos desde el front
+
+    if (!email) { // verificamos que el correo no esté vacio
+        console.error('No se ha proporcionado un email');
+        return res.status(400).json({ message: 'Email no proporcionado.' });
+    }
+
+    if (!cartItems || cartItems.length === 0) { // verificamos que no envie el carrito vacio
+        console.error('El carrito está vacío');
+        return res.status(400).json({ message: 'El carrito está vacío.' }); // 400 peticion mal hecha por parte del cliente
+    }
+
+    try {
+        const userResponse = await dynamoDB.get({ // buscamos el usuario en la BBDD usando su email 
+            TableName: 'usuarios',
+            Key: { email }
+        }).promise();
+
+        if (!userResponse.Item) {
+            console.error(`Usuario con email ${email} no encontrado`);
+            return res.status(400).json({ message: 'Usuario no encontrado.' });
+        }
+        // Extraemos nombre y el email y los almacenamos mediante Destructuring
+        const { nombre, email: userEmail } = userResponse.Item;
+        const doc = new PDFDocument();  // Aqui creamos el documento pdf
+        const archivoPdf = `./${userEmail}_pedido.pdf`; // basamos su nombre en su correo. 
+        const writeStream = fs.createWriteStream(archivoPdf); // "abre un archivo para escribir en el"
+        doc.pipe(writeStream); // "Empieza a mandar el contenido de este documento hacia el archivo que abrimos antes"
+
+
+        doc.fontSize(20).text('Resumen de Pedido - FrailesFit', { align: 'center' }); // Escribe el titutlo Principal del pedido
+        doc.moveDown();
+        doc.fontSize(12).text(`Nombre del cliente: ${nombre}`);
+        doc.text(`Email: ${userEmail}`); // nombre e email del cliente
+        doc.moveDown();
+        doc.fontSize(14).text('Productos del carrito:', { underline: true }); // Añadimos subtiulo con subrallado 
+        doc.moveDown();
+
+        // Productos
+        // creamos un bucle para recorrer los productos e ir pintando sus elementos 
+        for (const item of cartItems) {
+            doc.fontSize(12).text(`Producto: ${item.nombre}`); // nombre
+            doc.text(`Talla: ${item.talla || 'N/A'}`); // talla , si la hayS
+            doc.text(`Cantidad: ${item.cantidad}`); // cantidad 
+            doc.text(`Precio unitario: ${item.precio.toFixed(2)} €`); // precio con redondeo de hasta 2 decimales
+            doc.text(`Subtotal: ${(item.precio * item.cantidad).toFixed(2)} €`); // total con redondeo 
+
+            // Comprobamos si el item tiene una imagen asociada
+            if (item.imagen) {
+                try {
+                    // Usamos Axios para hacer una solicitud GET a la URL de la imagen
+                    // Esto nos devuelve la imagen en formato binario (arraybuffer)
+                    const response = await axios.get(item.imagen, { responseType: 'arraybuffer' });
+
+                    // Convertimos la respuesta binaria en un Buffer, que es lo que PDFKit necesita para insertar imágenes
+                    const imageBuffer = Buffer.from(response.data, 'binary');
+
+                    // Insertamos la imagen en el PDF. 
+                    // fit: [100, 100] redimensiona la imagen para ajustarse a un tamaño de 100px por 100px.
+                    // align: 'left' alinea la imagen a la izquierda.
+                    doc.image(imageBuffer, {
+                        fit: [100, 100],
+                        align: 'left'
+                    });
+                } catch (error) {
+                    // Si hubo un error al intentar cargar la imagen, lo mostramos en consola.
+                    console.error(`No se pudo cargar la imagen de ${item.nombre}: ${item.imagen}`, error.message);
+                }
+            }
+
+            // Después de insertar la imagen, agregamos un espacio en blanco de 2 líneas (espaciado)
+            doc.moveDown(2);
+
+        }
+
+        // Total
+        // reduce es un metodo de arrays que acumula un valor, acc = acumulador, item = valor actual,  0 = valor inicial. 
+        const total = cartItems.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
+        // damos un poco de espacio 
+        doc.moveDown();
+        // y mostramos el todal
+        doc.fontSize(14).text(`Total del pedido: ${total.toFixed(2)} €`, { align: 'right', underline: true });
+
+        doc.end();
+        // Cuando el Pdf ha sido escrito está listo para ser enviado mediante la ejecucion de esta funcion. 
+        writeStream.on('finish', async () => {
+            const transporter = nodemailer.createTransport({ // creamos un transportador para enviar un correo electronico.
+                service: 'gmail',
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASS,
+                },
+            });
+            // Opciones del corro electronico
+            const mailOptions = {
+                from: `"FrailesFit" <${process.env.EMAIL_USER}>`,
+                to: 'frailesfit@gmail.com',
+                subject: `Nuevo pedido realizado por ${nombre}`,
+                text: `Estimado equipo de FrailesFit,
+
+Se ha recibido un nuevo pedido realizado por ${nombre} (${userEmail}).
+
+Adjunto encontrarán el resumen detallado del pedido en formato PDF, incluyendo productos, cantidades, tallas y total facturado.
+
+Por favor, procedan a la gestión del mismo según los procedimientos habituales.
+
+Un cordial saludo,
+
+Sistema de pedidos de FrailesFit
+`,
+                attachments: [ // Adjuntos
+                    {
+                        filename: `${userEmail}_pedido.pdf`,
+                        path: archivoPdf, //  Ruta del archivo
+                    },
+                ],
+            };
+            // enviamos el correo
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    console.error('Error al enviar el correo:', error);
+                    return res.status(500).json({ message: 'Error al enviar el correo de confirmación.' });
+                }
+
+                fs.unlinkSync(archivoPdf); // Si el correo se envió correctamente, eliminamos el archivo PDF generado para evitar acumular archivos innecesarios
+                return res.status(200).json({ message: 'Pedido realizado con éxito. El administrador ha sido notificado.' });
+            });
+        });
+
+    } catch (error) {
+        console.error('Error al procesar el pedido:', error);
+        return res.status(500).json({ message: 'Hubo un problema al procesar el pedido.' });
+    }
+});
 
 
 // Iniciar servidor, esto arranca el servidor express y lo pone a escuchar peticiones Http
