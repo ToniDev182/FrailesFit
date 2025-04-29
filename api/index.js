@@ -12,6 +12,8 @@ const PDFDocument = require("pdfkit"); // Es una librería para generar archivos
 const fs = require("fs"); // Es un módulo nativo de Node.js (no tengo que instalarlo) para interactuar con el sistema de archivos. 
 const axios = require('axios'); // Es una librería para hacer peticiones HTTP (GET, POST, PUT, DELETE, etc.). la uso en este caso para meter las imagenes dentro del PDF ya que no estan alojadas localmente.
 
+
+
 const app = express(); // crea una instancia del servidor llamada app
 const port = process.env.PORT || 3000; // elegimos la puerta de entrada al servidor
 
@@ -44,17 +46,40 @@ app.get('/api/google-maps-key', (req, res) => {
 
 
 
+
 // Obtener todos los usuarios
-app.get('/users', async (req, res) => { // Peticion tipo get con una solicitud(req y una respuesta res) ademas asincrona para dar tiempo a la busqueda en la base de datos
+app.get('/users', async (req, res) => {
+    // Petición tipo GET con una solicitud (req) y una respuesta (res)
+    // Además, es asincrónica para esperar a la búsqueda en la base de datos
+
     const params = {
-        TableName: 'usuarios', //nombre de la tabla
+        TableName: 'usuarios', // nombre de la tabla en DynamoDB
     };
 
     try {
-        const data = await dynamoDB.scan(params).promise(); // scan recupera todos los elementos de la tabla  y promise lo convierte la operacion en una promesa, await permite que se espere el resultado de la operacion
-        res.json(data.Items); // si la operacion es exitosa de vuelve los items que son los usuarios en formato json
+        // scan recupera todos los elementos de la tabla 
+        // y .promise() convierte la operación en una promesa
+        const data = await dynamoDB.scan(params).promise();
+
+        // Ordenamos los usuarios por nombre y, si hay empate, por apellidos
+        const usuariosOrdenados = data.Items.sort((a, b) => {
+            const nombreA = a.nombre?.toLowerCase() || '';      // Prevención si viene nulo
+            const nombreB = b.nombre?.toLowerCase() || '';
+            const apellidosA = a.apellidos?.toLowerCase() || '';
+            const apellidosB = b.apellidos?.toLowerCase() || '';
+
+            if (nombreA === nombreB) {
+                return apellidosA.localeCompare(apellidosB); // Si los nombres son iguales, compara apellidos
+            }
+
+            return nombreA.localeCompare(nombreB); // Si no, compara por nombre
+        });
+
+        // Si la operación es exitosa devuelve los usuarios ordenados en formato JSON
+        res.json(usuariosOrdenados);
     } catch (error) {
-        console.error('Error al obtener los usuarios:', error); // si hay algun error se captura y devuelve error 500
+        // Si hay algún error se captura y se devuelve error 500
+        console.error('Error al obtener los usuarios:', error);
         res.status(500).json({ error: 'No se pudieron obtener los usuarios' });
     }
 });
@@ -83,42 +108,61 @@ app.delete('/users/:email', async (req, res) => {
 
 // Actualizar usuario
 app.put('/users/:email', async (req, res) => {
-    const email = req.params.email;
-    const updatedUser = req.body; // Datos del usuario actualizado
-
-    const params = {
-        TableName: 'usuarios',
-        Key: { email }, // La clave primaria es el email
-        UpdateExpression: 'set #nombre = :nombre, #apellidos = :apellidos, #direccion = :direccion, #telefono = :telefono, #dni = :dni, #edad = :edad, #tipoUsuario = :tipoUsuario',
-        ExpressionAttributeNames: {
-            '#nombre': 'nombre',
-            '#apellidos': 'apellidos',  // Añadido
-            '#direccion': 'direccion',
-            '#telefono': 'telefono',
-            '#dni': 'dni',
-            '#edad': 'edad',
-            '#tipoUsuario': 'tipoUsuario',
-        },
-        ExpressionAttributeValues: {
-            ':nombre': updatedUser.nombre,
-            ':apellidos': updatedUser.apellidos,  // Añadido
-            ':direccion': updatedUser.direccion,
-            ':telefono': updatedUser.telefono,
-            ':dni': updatedUser.dni,
-            ':edad': updatedUser.edad,
-            ':tipoUsuario': updatedUser.tipoUsuario,
-        },
-        ReturnValues: 'ALL_NEW', // Devuelve todos los atributos del usuario actualizado
-    };
+    const emailAntiguo = req.params.email;
+    const usuarioActualizado = req.body;
+    const emailNuevo = usuarioActualizado.email;
 
     try {
-        const result = await dynamoDB.update(params).promise(); // Actualizar el usuario en la base de datos
-        res.json(result.Attributes); // Devolver el usuario actualizado
+        if (emailAntiguo !== emailNuevo) {
+            // 1. Crear nuevo usuario con el nuevo email
+            await dynamoDB.put({
+                TableName: 'usuarios',
+                Item: usuarioActualizado,
+            }).promise();
+
+            // 2. Eliminar usuario antiguo
+            await dynamoDB.delete({
+                TableName: 'usuarios',
+                Key: { email: emailAntiguo },
+            }).promise();
+
+            return res.json({ mensaje: 'Usuario actualizado con nuevo email' });
+        } else {
+            // Si el email no cambió, simplemente actualiza los demás campos
+            const params = {
+                TableName: 'usuarios',
+                Key: { email: emailAntiguo },
+                UpdateExpression: 'set #nombre = :nombre, #apellidos = :apellidos, #direccion = :direccion, #telefono = :telefono, #dni = :dni, #edad = :edad, #tipoUsuario = :tipoUsuario',
+                ExpressionAttributeNames: {
+                    '#nombre': 'nombre',
+                    '#apellidos': 'apellidos',
+                    '#direccion': 'direccion',
+                    '#telefono': 'telefono',
+                    '#dni': 'dni',
+                    '#edad': 'edad',
+                    '#tipoUsuario': 'tipoUsuario',
+                },
+                ExpressionAttributeValues: {
+                    ':nombre': usuarioActualizado.nombre,
+                    ':apellidos': usuarioActualizado.apellidos,
+                    ':direccion': usuarioActualizado.direccion,
+                    ':telefono': usuarioActualizado.telefono,
+                    ':dni': usuarioActualizado.dni,
+                    ':edad': usuarioActualizado.edad,
+                    ':tipoUsuario': usuarioActualizado.tipoUsuario,
+                },
+                ReturnValues: 'ALL_NEW',
+            };
+
+            const result = await dynamoDB.update(params).promise();
+            res.json(result.Attributes);
+        }
     } catch (error) {
         console.error('Error al actualizar el usuario:', error);
         res.status(500).json({ error: 'No se pudo actualizar el usuario' });
     }
 });
+
 
 
 
@@ -300,16 +344,37 @@ app.post('/login', async (req, res) => {  // endPoit de tipo post donde vamos a 
 
 
 
-// pagos 
+// Obtener todos los pagos
 app.get('/api/pagos', async (req, res) => {
+    // Petición tipo GET con una solicitud (req) y una respuesta (res)
+    // Es asincrónica para esperar a la operación de base de datos
+
     const params = {
-        TableName: 'Pagos',
+        TableName: 'Pagos', // nombre de la tabla en DynamoDB
     };
 
     try {
-        const result = await dynamoDB.scan(params).promise();
-        res.json(result.Items); // Devuelve todos los pagos como JSON
+        // Recuperamos todos los pagos de la tabla
+        const data = await dynamoDB.scan(params).promise();
+
+        // Ordenamos los pagos por nombre y, si hay empate, por apellidos
+        const pagosOrdenados = data.Items.sort((a, b) => {
+            const nombreA = a.nombre?.toLowerCase() || '';
+            const nombreB = b.nombre?.toLowerCase() || '';
+            const apellidosA = a.apellidos?.toLowerCase() || '';
+            const apellidosB = b.apellidos?.toLowerCase() || '';
+
+            if (nombreA === nombreB) {
+                return apellidosA.localeCompare(apellidosB); // Compara apellidos si los nombres son iguales
+            }
+
+            return nombreA.localeCompare(nombreB); // Compara por nombre si son diferentes
+        });
+
+        // Si todo va bien, devolvemos los pagos ordenados en formato JSON
+        res.json(pagosOrdenados);
     } catch (error) {
+        // Si ocurre un error, lo capturamos y enviamos un error 500
         console.error('Error al obtener pagos:', error);
         res.status(500).json({ message: 'Error al obtener los pagos' });
     }
@@ -349,6 +414,42 @@ app.put('/api/pagos/:email/:mes_anio', async (req, res) => {
 });
 
 
+app.post('/api/pagos', async (req, res) => {
+    const data = req.body;
+
+    // Validación básica de datos
+    if (!data.email || !data.mes_anio || !data.mes || !data.anio || !data.estado || !data.metodo) {
+        return res.status(400).json({ message: 'Faltan datos necesarios para el pago' });
+    }
+
+    const params = {
+        TableName: 'Pagos',
+        Item: {
+            email: data.email,
+            mes_anio: data.mes_anio,
+            mes: data.mes,
+            anio: data.anio,
+            estado: data.estado,
+            fechaPago: data.fechaPago || new Date().toISOString(), // Si no se pasa una fecha, se usa la actual
+            cantidad: data.cantidad,
+            metodo: data.metodo,
+            nombre: data.nombre,
+            apellidos: data.apellidos
+        }
+    };
+
+    try {
+        await dynamoDB.put(params).promise();
+        res.status(201).json({ message: 'Pago insertado correctamente' });
+    } catch (error) {
+        console.error('Error al insertar el pago:', error);
+        res.status(500).json({
+            message: 'Error al insertar el pago',
+            error: error.message
+        });
+    }
+});
+
 // borrar un pago
 app.delete('/api/pagos/:email/:mes_anio', async (req, res) => {
     const { email, mes_anio } = req.params;
@@ -376,10 +477,6 @@ app.delete('/api/pagos/:email/:mes_anio', async (req, res) => {
 app.post('/api/pagos/nuevo', async (req, res) => {
     const { email, nombre, apellidos, mes, anio, cantidad, fechaPago, estado, metodo } = req.body;
 
-    // Verificación de campos obligatorios
-    if (!email || !mes || !anio) {
-        return res.status(400).json({ message: 'Faltan campos obligatorios (email, mes o año)' });
-    }
 
     // Generación del campo mes_anio
     const mes_anio = `${anio}-${String(mes).padStart(2, '0')}`;

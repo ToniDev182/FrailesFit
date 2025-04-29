@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             col.innerHTML = `
                 <div class="card h-100">
-                    <img src="${ej.imagenUrl}" class="card-img-top" alt="${ej.nombre}">
+                    <img src="${ej.imagenUrl}" class="card-img-top" alt="${ej.nombre}" style="max-width: 100%; height: auto; object-fit: contain;">
                     <div class="card-body">
                         <h5 class="card-title">${ej.nombre}</h5>
                         <p class="card-text">${ej.grupoMuscular}</p>

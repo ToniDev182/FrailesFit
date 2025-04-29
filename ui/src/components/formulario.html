@@ -30,7 +30,7 @@
                         id="mensaje" placeholder="Escribe tu mensaje..."></textarea>
                 </div>
 
-               
+
 
                 <div class="mb-3 form-check">
                     <input type="checkbox" class="form-check-input formulario-input" id="aceptarPoliticas" required>
@@ -47,6 +47,21 @@
                 <button class="btn formBtn fw-bold fs-3 px-5 mt-4 py-2" type="button" id="enviarFormulario">
                     Enviar
                 </button>
+            </div>
+
+
+
+
+            <div class="d-flex justify-content-center align-items-center">
+                <div id="spinner" class="spinner-border text-primary m-4" role="status" style="display: none;">
+                    <span class="sr-only">Cargando...</span>
+                </div>
+            </div>
+
+
+
+            <div id="mensajeExito" class="alert alert-success text-center m-4" role="alert" style="display: none;">
+                ¡Mensaje enviado exitosamente!
             </div>
         </form>
 

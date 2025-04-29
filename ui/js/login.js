@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {  // se asegura que el codi
 
     const form = document.querySelector('.formulario'); // seleccionamos el formulario 
 
-    if (form) { // si se ha cargado el elemento formularo en el DOM 
+    if (form) { // si se ha cargado el elemento formulario en el DOM 
       form.addEventListener('submit', async (e) => { // añadimos un listener para enviar el formulario  
         e.preventDefault(); // evitamos toda accion por defecto 
 
@@ -14,6 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {  // se asegura que el codi
           alert('Por favor, completa todos los campos.');
           return;
         }
+
+        // Mostrar el spinner mientras se espera la respuesta
+        const spinner = document.getElementById('spinner');
+        spinner.style.display = 'block';  // Mostrar el spinner
 
         try {
           const response = await fetch('http://localhost:3000/login', { // venga, y ahora realizamos la consulta a nuestra api
@@ -27,25 +31,29 @@ document.addEventListener('DOMContentLoaded', () => {  // se asegura que el codi
           const data = await response.json(); // Obtenemos la respuesta en json
 
           if (response.ok) { // si hay exito en la respuesta enviamos el mensaje 
-            alert(data.message);
 
-
-            // vamos a alamcenar los datos del usuario en el local storage
+            // vamos a almacenar los datos del usuario en el local storage
             localStorage.setItem('usuario', JSON.stringify({
               nombre: data.nombre,
               email: data.email,
               tipoUsuario: data.tipoUsuario,
             }));
 
-            // Redirigir al index
-            window.location.href = '../../index.html';
+            // Esperar unos segundos para mostrar el spinner antes de redirigir
+            setTimeout(() => {
+              window.location.href = '../../index.html'; // Redirigir al index
+            }, 1000);  // Aquí se podría ajustar el tiempo de espera
+
           } else {
             alert(data.message);
           }
 
         } catch (error) {
-          console.error('Error al intentar iniciar sesión:', error); // si hubo algun error a la hora de hacer la solicitud o precesarla lo capturamos 
+          console.error('Error al intentar iniciar sesión:', error); // si hubo algun error a la hora de hacer la solicitud o procesarla lo capturamos 
           alert('Hubo un error en el servidor. Intenta de nuevo más tarde.');
+        } finally {
+          // Ocultar el spinner cuando se termine
+          spinner.style.display = 'none'; // Escondemos el spinner cuando se complete el proceso
         }
       });
     }
@@ -65,6 +73,12 @@ document.addEventListener('DOMContentLoaded', () => {  // se asegura que el codi
         const adminBtn = document.getElementById('admin-panel-btn');
         if (adminBtn) {
           adminBtn.classList.remove('d-none');
+        }
+
+        // Mostrar la sección de registro solo si el usuario es admin
+        const registerDiv = document.querySelector('.register'); // seleccionamos el contenedor de registro
+        if (registerDiv) {
+          registerDiv.classList.remove('d-none'); // quitamos la clase que lo oculta
         }
       }
 

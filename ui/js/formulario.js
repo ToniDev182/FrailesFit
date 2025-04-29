@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         const form = document.querySelector('.formulario');
         const submitButton = document.querySelector('#enviarFormulario');
+        const spinner = document.querySelector('#spinner');
+        const mensajeExito = document.querySelector('#mensajeExito');
 
         // Verificar si el formulario y el botón están disponibles
         if (!form || !submitButton) {
@@ -62,6 +64,10 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Datos listos para enviar:', formData);
 
             try {
+                // Mostrar el spinner y ocultar el mensaje de éxito
+                spinner.style.display = 'inline-block';
+                mensajeExito.style.display = 'none';
+
                 const response = await fetch('http://localhost:3000/enviar-email', {
                     method: 'POST',
                     headers: {
@@ -75,14 +81,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log('Respuesta del servidor:', data);
 
                 if (response.ok) {
-                    alert('¡Mensaje enviado exitosamente!');
+                    // Ocultar el spinner y mostrar el mensaje de éxito
+                    spinner.style.display = 'none';
+                    mensajeExito.style.display = 'block';
                     form.reset(); // Resetear el formulario después de enviar
-                } else {
-                    alert('Hubo un error al enviar el mensaje.');
+
+                    // Ocultar el mensaje de éxito después de 2 segundos
+                    setTimeout(() => {
+                        mensajeExito.style.display = 'none';
+                    }, 2000); // 2000ms = 2 segundos
                 }
             } catch (error) {
                 console.error('Error al intentar enviar el mensaje:', error);
-                alert('Hubo un error en el servidor. Intenta de nuevo más tarde.');
+                // Ocultar el spinner
+                spinner.style.display = 'none';
             }
         });
     }, 500); // Espera 500ms para asegurarse de que los elementos están listos
