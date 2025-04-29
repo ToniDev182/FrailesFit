@@ -74,6 +74,12 @@ document.addEventListener('DOMContentLoaded', () => {  // se asegura que el codi
         if (adminBtn) {
           adminBtn.classList.remove('d-none');
         }
+
+        // Mostrar la sección de registro solo si el usuario es admin
+        const registerDiv = document.querySelector('.register'); // seleccionamos el contenedor de registro
+        if (registerDiv) {
+          registerDiv.classList.remove('d-none'); // quitamos la clase que lo oculta
+        }
       }
 
     } else {
