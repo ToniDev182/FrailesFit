@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        // Hacemos la petición al endpoint para obtener los pagos
+        // Hacemos la petición al endpoint para obtener todos los pagos
         const response = await fetch('http://localhost:3000/api/pagos');
         const responseText = await response.text();  // Obtener la respuesta como texto
 
@@ -13,30 +13,44 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
+        // Obtener el select para los usuarios
+        const selectUsuarios = document.getElementById('filtro-usuarios');
+
+        // Crear un conjunto para evitar duplicados
+        const usuarios = new Set();
+
+        // Llenar el conjunto con los nombres completos de los usuarios
+        pagos.forEach(pago => {
+            usuarios.add(`${pago.nombre} ${pago.apellidos}`);
+        });
+
+        // Llenar el select con los usuarios
+        usuarios.forEach(usuario => {
+            const option = document.createElement('option');
+            option.value = usuario;
+            option.textContent = usuario;
+            selectUsuarios.appendChild(option);
+        });
+
+        // Obtener la tabla para los pagos
         const tableBody = document.getElementById('pagos-table-body');
-        
-        // Creamos un objeto para agrupar los pagos por email
-        const pagosPorUsuario = pagos.reduce((acc, pago) => {
-            if (!acc[pago.email]) {
-                acc[pago.email] = [];
+
+        // Función para actualizar la tabla según el usuario seleccionado
+        const actualizarPagos = (usuarioSeleccionado) => {
+            tableBody.innerHTML = '';  // Limpiar la tabla
+
+            // Filtrar los pagos por el usuario seleccionado
+            const pagosUsuario = pagos.filter(pago => `${pago.nombre} ${pago.apellidos}` === usuarioSeleccionado);
+
+            // Si no hay pagos para el usuario, mostrar mensaje
+            if (pagosUsuario.length === 0) {
+                const noDataRow = document.createElement('tr');
+                noDataRow.innerHTML = `<td colspan="11" class="text-center">No hay pagos para este usuario.</td>`;
+                tableBody.appendChild(noDataRow);
+                return;
             }
-            acc[pago.email].push(pago);
-            return acc;
-        }, {});
 
-        // Iteramos sobre los pagos por usuario
-        for (const [email, pagosUsuario] of Object.entries(pagosPorUsuario)) {
-            // Fila con el correo del usuario, nombre y apellidos como encabezado
-            const headerRow = document.createElement('tr');
-            const primerPago = pagosUsuario[0];  // Tomamos el primer pago para obtener el nombre y apellidos
-            headerRow.innerHTML = `
-                <td colspan="11" class="text-center fw-bold">
-                    ${primerPago.nombre} ${primerPago.apellidos} (${email})
-                </td>
-            `;
-            tableBody.appendChild(headerRow);
-
-            // Iteramos sobre los pagos de cada usuario
+            // Iterar sobre los pagos del usuario seleccionado y mostrarlos en la tabla
             pagosUsuario.forEach(pago => {
                 const row = document.createElement('tr');
 
@@ -60,11 +74,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 tableBody.appendChild(row);
 
-                // guardar cambios  
+                // Guardar cambios del pago
                 const saveButton = row.querySelector('.save-btn');
                 saveButton.addEventListener('click', async () => {
                     const updatedPago = {};
-
                     row.querySelectorAll('.edit-field').forEach(input => {
                         updatedPago[input.getAttribute('data-field')] = input.value;
                     });
@@ -81,8 +94,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                         });
 
                         const responseText = await response.text();
-                        console.log(responseText);
-
                         let data;
                         try {
                             data = JSON.parse(responseText);
@@ -103,22 +114,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                 });
 
-                // Eliminar pago (Función unificada para eliminar pagos)
+                // Eliminar pago
                 const deleteButton = row.querySelector('.delete-btn');
                 deleteButton.addEventListener('click', () => {
                     deletePago(pago, row);  // Llamamos a la función de eliminación para el pago existente
                 });
 
-                // Nuevo pago para el mismo usuario
+                // Crear nuevo pago
                 const newButton = row.querySelector('.new-btn');
                 newButton.addEventListener('click', () => {
                     const newRow = document.createElement('tr');
-
                     newRow.innerHTML = `
-                        <td><input type="email" value="${pago.email}" class="form-control" data-field="email" disabled></td>
+                        <td><input type="email" value="${pago.email}" class="form-control edit-field" data-field="email" disabled></td>
                         <td><input type="text" value="" class="form-control edit-field" data-field="mes_anio"></td>
-                        <td><input type="text" value="${pago.nombre}" class="form-control" data-field="nombre" disabled></td>
-                        <td><input type="text" value="${pago.apellidos}" class="form-control" data-field="apellidos" disabled></td>
+                        <td><input type="text" value="${pago.nombre}" class="form-control edit-field" data-field="nombre" disabled></td>
+                        <td><input type="text" value="${pago.apellidos}" class="form-control edit-field" data-field="apellidos" disabled></td>
                         <td><input type="text" value="" class="form-control edit-field" data-field="mes"></td>
                         <td><input type="number" value="${new Date().getFullYear()}" class="form-control edit-field" data-field="anio"></td>
                         <td><input type="text" value="no pagado" class="form-control edit-field" data-field="estado"></td>
@@ -137,17 +147,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const saveNewButton = newRow.querySelector('.save-btn');
                     saveNewButton.addEventListener('click', async () => {
                         const newPago = {};
-
                         newRow.querySelectorAll('.edit-field').forEach(input => {
                             newPago[input.getAttribute('data-field')] = input.value;
                         });
-
-                        // Agregar los valores de los campos que no tienen la clase 'edit-field' (correo, nombre, apellidos)
-                        newPago.email = newRow.querySelector('input[data-field="email"]').value;
-                        newPago.nombre = newRow.querySelector('input[data-field="nombre"]').value;
-                        newPago.apellidos = newRow.querySelector('input[data-field="apellidos"]').value;
-
-                        console.log('Nuevo pago a guardar:', newPago);  // Verifica los datos
 
                         // Verificación de campos obligatorios
                         if (!newPago.email || !newPago.mes || !newPago.anio) {
@@ -167,8 +169,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                             });
 
                             const responseText = await response.text();
-                            console.log(responseText);  // Verificar la respuesta del servidor
-
                             let data;
                             try {
                                 data = JSON.parse(responseText);  // Intentar convertir la respuesta a JSON
@@ -188,18 +188,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                             alert('Hubo un error al intentar crear el nuevo pago.');
                         }
                     });
-
-                    // Función para eliminar el nuevo pago
-                    const deleteNewButton = newRow.querySelector('.delete-btn');
-                    deleteNewButton.addEventListener('click', () => {
-                        deletePago(null, newRow);  // Llamamos a la función de eliminación para el nuevo pago
-                    });
                 });
             });
-        }
+        };
 
+        // Cuando se cambia el usuario en el select
+        selectUsuarios.addEventListener('change', () => {
+            const usuarioSeleccionado = selectUsuarios.value;
+            if (usuarioSeleccionado) {
+                actualizarPagos(usuarioSeleccionado);  // Llamar a la función para mostrar los pagos del usuario seleccionado
+            } else {
+                tableBody.innerHTML = '';  // Limpiar la tabla si no hay usuario seleccionado
+            }
+        });
     } catch (error) {
-       
+        console.error('Error al cargar los pagos:', error);
+        alert('Hubo un error al cargar los pagos.');
     }
 });
 
@@ -212,31 +216,18 @@ async function deletePago(pago, row) {
                 headers: { 'Content-Type': 'application/json' },
             });
 
-            // Verificar si el tipo de contenido es JSON
-            const contentType = response.headers.get("Content-Type");
-            let responseText = await response.text();  // Leer la respuesta como texto
-
-            // Solo parseamos la respuesta si es JSON
-            let data = null;
-            if (contentType && contentType.includes("application/json")) {
-                try {
-                    data = JSON.parse(responseText);
-                } catch (error) {
-                    console.error('Error al parsear JSON:', error);
-                    alert('La respuesta del servidor no es JSON válido.');
-                    return;
-                }
-            }
-
+            // Verificar si la respuesta es exitosa
             if (response.ok) {
                 alert('Pago eliminado correctamente');
-                row.remove(); // Eliminar la fila de la tabla
+                row.remove();  // Eliminar la fila de la tabla
             } else {
-                alert(data ? data.message : 'Error al eliminar el pago');
+                const responseText = await response.text();
+                const responseData = JSON.parse(responseText);
+                alert(responseData.message || 'Error al eliminar el pago');
             }
         } catch (error) {
             console.error('Error al eliminar el pago:', error);
-            alert('Hubo un error al intentar eliminar el pago.');
+            alert('Hubo un error al eliminar el pago.');
         }
     }
 }

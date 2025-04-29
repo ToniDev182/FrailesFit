@@ -1,24 +1,20 @@
-document.addEventListener('DOMContentLoaded', async () => { // como siempre esperamos a que todo el contenido del DOM esté completamente cargado.
-
-
-  // creamos esta funcion para que el formulario esté 100% disponible en el DOM  
-  // cada 100mls se verifica si el formulario existe 
+document.addEventListener('DOMContentLoaded', async () => {
+  // Espera a que el formulario esté disponible en el DOM
   const esperarFormulario = () => {
-    return new Promise(resolve => { // cremos una promesa que regresará un resultado
-      const comprobarFormulario = setInterval(() => { // realiza la busqueda del formulario
-        const form = document.querySelector('form'); // mediante el selector del formulario
+    return new Promise(resolve => {
+      const comprobarFormulario = setInterval(() => {
+        const form = document.querySelector('form');
         if (form) {
-          clearInterval(comprobarFormulario); // detiene la busqueda una vez 
-          resolve(form); // resolvemos la promesa  y devuelve el objeto form asi, no hay fallo
+          clearInterval(comprobarFormulario);
+          resolve(form);
         }
       }, 100);
     });
   };
 
-
-
+  // Obtiene los datos del formulario
   const obtenerDatosFormulario = () => {
-    return { // accdemos a los elementos del DOM mediante mediante sus ides y los guardamos en una constante
+    return {
       nombre: document.getElementById('nombre').value.trim(),
       apellidos: document.getElementById('apellidos').value.trim(),
       direccion: document.getElementById('direccion').value.trim(),
@@ -30,105 +26,124 @@ document.addEventListener('DOMContentLoaded', async () => { // como siempre espe
     };
   };
 
-
-
-  const validarDatosFormulario = (datosFormulario) => { // una funcion para recorrer los datos del formulario 
-    for (const clave in datosFormulario) { // mediante un for
-      if (!datosFormulario[clave]) { // si falta alguno retornamos un false y un mensaje 
-        alert(`El campo ${clave} no puede estar vacío.`);
-        return false;
+  // Valida que todos los campos del formulario no estén vacíos
+  const validarDatosFormulario = (datosFormulario) => {
+    for (const clave in datosFormulario) {
+      if (!datosFormulario[clave]) {
+        return false; // Si algún campo está vacío, retorna false
       }
     }
-    return true;
+    return true; // Todos los campos están llenos
   };
 
+  // Muestra el spinner
+  const mostrarSpinner = () => {
+    const spinner = document.getElementById('spinner');
+    if (spinner) {
+      spinner.style.display = 'block';
+    }
+  };
 
+  // Oculta el spinner
+  const ocultarSpinner = () => {
+    const spinner = document.getElementById('spinner');
+    if (spinner) {
+      spinner.style.display = 'none';
+    }
+  };
 
-  const manejarEnvioFormulario = async (evento, formulario) => { // Creamos esta funcion asincrona que nos permitira esperar a que se completen diferentes acciones dentro de la misma, 
-    evento.preventDefault(); // evita que se recargue la pagina
+  // Muestra el mensaje de éxito
+  const mostrarMensajeExito = () => {
+    const mensaje = document.getElementById('mensajeExito');
+    if (mensaje) {
+      mensaje.style.display = 'block';
+    }
+  };
 
-    const datosFormulario = obtenerDatosFormulario(); // guardamos los datos del formulario dentro de una constante
+  // Oculta el mensaje de éxito después de un delay
+  const ocultarMensajeExitoDespuesDeUnDelay = () => {
+    const mensaje = document.getElementById('mensajeExito');
+    setTimeout(() => {
+      if (mensaje) {
+        mensaje.style.display = 'none';
+      }
+    }, 5000); // 5 segundos
+  };
 
-    if (!validarDatosFormulario(datosFormulario)) { // Validamos la informacion del formulario 
+  // Redirige al login después de un tiempo
+  const redirigirALogin = () => {
+    setTimeout(() => {
+      window.location.href = 'login.html'; // Redirige a la página de login
+    }, 5000); // Después de 5 segundos
+  };
+
+  // Maneja el envío del formulario
+  const manejarEnvioFormulario = async (evento, formulario) => {
+    evento.preventDefault(); // Previene el comportamiento por defecto del formulario
+
+    const datosFormulario = obtenerDatosFormulario();
+
+    if (!validarDatosFormulario(datosFormulario)) {
+      // Si los datos no son válidos, no hacer nada más
       return;
     }
 
     try {
-      const respuesta = await enviarDatosFormulario(datosFormulario); // hacemos una llamada a la fucion enviarDatos que es una funcion asincrona que envia datos del formulario al servidor, usamos await para esperar a que esta funcion termine antes de continuar
+      mostrarSpinner(); // Mostrar spinner mientras se envían los datos
+      const respuesta = await enviarDatosFormulario(datosFormulario);
 
-      if (!respuesta.ok) { // Si la respuesta no es exitosa se extrae el mensaje de error de la respuesta del servidor
-        const mensajeError = await respuesta.text();
-        console.error('Error en la solicitud:', mensajeError);
-        alert('Hubo un problema con el registro. Intenta de nuevo.');
-        return; // detine la ejecucion
+      ocultarSpinner(); // Ocultar spinner después de la respuesta
+
+      if (!respuesta.ok) {
+        console.error('Error en la solicitud:', respuesta.statusText);
+        return; // Si la respuesta no es válida, no continuar
       }
 
-      let datos = null; // iniciamos datos a null
-      try { // se intenta parsear la respuesta a JSON 
+      let datos = null;
+      try {
         datos = await respuesta.json();
-      } catch (e) { // en caso de que no sea posible , se captura el error y se muestra el error
+      } catch (e) {
         console.error('Error al parsear la respuesta JSON:', e);
-        alert('La respuesta del servidor no es válida.');
         return;
       }
 
-      if (datos && datos.message) {  // para sacar el mensaje de la respuesta del servidor. por ejemplo puede ser que la contraseña tiene menos de 6 carctres
-        alert(datos.message);
+      if (datos && datos.message) {
+        // Si la respuesta contiene un mensaje, mostrar el mensaje de éxito
+        mostrarMensajeExito();
+        formulario.reset(); // Resetea el formulario
+        ocultarMensajeExitoDespuesDeUnDelay(); // Ocultar el mensaje de éxito después de 5 segundos
+        redirigirALogin(); // Redirigir al login después de mostrar el mensaje de éxito
       } else {
-        alert('La respuesta del servidor no contiene un mensaje.');
+        console.error('La respuesta del servidor no contiene un mensaje.');
       }
-
-      mostrarMensajeExito(); // tengo un mensaje de exito en el propio html, este tiene un display none, que pasa a block con esta funcion 
-      formulario.reset(); // reseteamos los campos del formulario 
-      ocultarMensajeExitoDespuesDeUnDelay(); // dicho mensaje pasa a oculto otra vez tras un tiempo de espera
-
     } catch (error) {
-      console.error('Error al enviar el formulario:', error); // si ocurre cualquier otro error dentro del try lanzamos este error
-      alert('Hubo un problema al registrar el usuario.');
+      console.error('Error al enviar el formulario:', error);
+      ocultarSpinner(); // Asegurarse de que el spinner se oculte en caso de error
     }
   };
 
-
-
-  const enviarDatosFormulario = async (datosFormulario) => { // enviamos a nuestro servidor (api los datos del formulario)
+  // Función para enviar los datos del formulario al servidor
+  const enviarDatosFormulario = async (datosFormulario) => {
     try {
-      const respuesta = await fetch('http://localhost:3000/register', { // enviamos a nuestra url
+      const respuesta = await fetch('http://localhost:3000/register', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json', // decimos al servidor que el contenido de la solicitud es tipo JSON
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(datosFormulario), // contiene los datos que se envian al servidor
-      }); // fetch y await garantizan que la ejecucion se detendrá hasta que el servidor responda.
+        body: JSON.stringify(datosFormulario),
+      });
 
-      return respuesta; // lo que devuelve el servidor
+      return respuesta; // Devuelve la respuesta de la solicitud
     } catch (error) {
+      console.error('Error al enviar los datos del formulario:', error);
       throw new Error('Error al enviar los datos del formulario');
     }
   };
 
-
-
-  const mostrarMensajeExito = () => { // mostrar el mensaje de exito
-    const mensaje = document.getElementById('message');
-    mensaje.style.display = 'block';
-  };
-
-
-
-  const ocultarMensajeExitoDespuesDeUnDelay = () => { // volever a ocultar el mensaje 5 segundos despues
-    const mensaje = document.getElementById('message');
-    setTimeout(() => {
-      mensaje.style.display = 'none';
-    }, 5000);
-  };
-
-
-
-
-
+  // Esperar a que el formulario esté disponible y luego agregar el event listener
   try {
-    const formulario = await esperarFormulario(); // formulario almacena el formulario una vez esté disponible
-    formulario.addEventListener('submit', (evento) => manejarEnvioFormulario(evento, formulario)); // esta funcion es para que cuando el formulario sea envidado , le estamos diciendo ejecuta la funcion manejar formulario con el formulario dentro
+    const formulario = await esperarFormulario();
+    formulario.addEventListener('submit', (evento) => manejarEnvioFormulario(evento, formulario));
   } catch (error) {
     console.error('Formulario no encontrado:', error);
   }

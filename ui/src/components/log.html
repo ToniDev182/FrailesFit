@@ -20,12 +20,6 @@
                     <span class="invalid-feedback">Introduce tu contraseña.</span>
                 </div>
 
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input formulario-input" id="recordarSesion">
-                    <label class="form-check-label fw-bold text-white" for="recordarSesion">
-                        Recuérdame
-                    </label>
-                </div>
             </fieldset>
 
             <div class="d-flex justify-content-center gap-3">
@@ -34,12 +28,15 @@
             </div>
 
             <div class="text-center mt-3">
-                <a class="enlace text-decoration-none credenciales fw-bold" href="#">¿Olvidaste tu contraseña?</a> |
                 <a class="enlace text-decoration-none credenciales fw-bold" href="../pages/registro.html">Registrarse</a>
+            </div>
+
+            <!-- Spinner de carga -->
+            <div id="spinner" class="text-center mt-3" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
             </div>
         </form>
     </div>
 </section>
-
-<script src="../../js/login.js"></script>
-</body>

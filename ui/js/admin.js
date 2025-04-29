@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             row.innerHTML = `
                 <td><input type="text" value="${user.nombre}" class="form-control edit-field" data-field="nombre"></td>
                 <td><input type="text" value="${user.apellidos}" class="form-control edit-field" data-field="apellidos"></td>
-                <td><input type="email" value="${user.email}" class="form-control edit-field" data-field="email" disabled></td>
+                <td><input type="email" value="${user.email}" class="form-control edit-field" data-field="email"></td>
                 <td><input type="text" value="${user.direccion}" class="form-control edit-field" data-field="direccion"></td>
                 <td><input type="text" value="${user.telefono}" class="form-control edit-field" data-field="telefono"></td>
                 <td><input type="text" value="${user.dni}" class="form-control edit-field" data-field="dni"></td>
