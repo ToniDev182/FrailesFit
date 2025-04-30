@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {  // se asegura que el codi
           } else {
             alert(data.message);
           }
-   
+        
         } catch (error) {
           console.error('Error al intentar iniciar sesión:', error); // si hubo algun error a la hora de hacer la solicitud o procesarla lo capturamos 
           alert('Hubo un error en el servidor. Intenta de nuevo más tarde.');
