@@ -2,6 +2,7 @@
 
 const express = require('express'); // Servidor web
 const bodyParser = require('body-parser'); // Para poder leer los datos JSON que llegan en peticiones post
+const https = require('https');
 const AWS = require('aws-sdk'); // para usar DynamoDB (la base de datos en AWSs)
 const cors = require('cors'); // Para comunicar front y back aunque esten en dominios distintos 
 const bcrypt = require('bcrypt'); // Para encriptar contraseñas
@@ -12,7 +13,20 @@ const PDFDocument = require("pdfkit"); // Es una librería para generar archivos
 const fs = require("fs"); // Es un módulo nativo de Node.js (no tengo que instalarlo) para interactuar con el sistema de archivos. 
 const axios = require('axios'); // Es una librería para hacer peticiones HTTP (GET, POST, PUT, DELETE, etc.). la uso en este caso para meter las imagenes dentro del PDF ya que no estan alojadas localmente.
 
+const options = {
+    key: fs.readFileSync('/home/ubuntu/certs/server.key'), // Ajusta si usas otra ruta
+    cert: fs.readFileSync('/home/ubuntu/certs/server.cert')
+};
 
+
+app.use(express.json());
+app.post('/pruba', (req, res) => {
+    res.json({ msg: 'OK desde HTTPS' });
+});
+
+https.createServer(options, app).listen(443, () => {
+    console.log('Servidor HTTPS en puerto 443');
+});
 
 const app = express(); // crea una instancia del servidor llamada app
 const port = process.env.PORT || 3000; // elegimos la puerta de entrada al servidor
