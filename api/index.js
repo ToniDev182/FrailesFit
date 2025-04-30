@@ -28,7 +28,7 @@ AWS.config.update({ // conectamos nuestro Backend Con nuestro servicio de AWS
 
 
 app.use(cors({  //habilita cors. 
-    origin: process.env.FRONTEND_URL || 'http://127.0.0.1:5500', // esto es como decir "Permito que el navegador desde esta direccion haga peticiones a mi servidor express  que corre en esta otra"
+    origin: 'http://127.0.0.1:5500' || process.env.FRONTEND_URL, // esto es como decir "Permito que el navegador desde esta direccion haga peticiones a mi servidor express  que corre en esta otra"
     credentials: true,
 }));
 

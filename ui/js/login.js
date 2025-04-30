@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {  // se asegura que el codi
         spinner.style.display = 'block';  // Mostrar el spinner
 
         try {
-          const response = await fetch('http://localhost:3000/login', { // venga, y ahora realizamos la consulta a nuestra api
+          const response = await fetch(`${API_URL}/login`, { // venga, y ahora realizamos la consulta a nuestra api
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
