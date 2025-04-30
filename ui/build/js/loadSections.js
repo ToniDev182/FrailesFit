@@ -1,4 +1,4 @@
-const API_URL = 'http://52.50.208.231:3000'; 
+const API_URL = 'https://52.50.208.231:443'; 
 
 const loadComponent = (id, url) => { // vamos a hacer una funcion para cargar un componente. 
 
