@@ -1,6 +1,6 @@
 const API_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
     ? 'http://localhost:3000'  // Para desarrollo local
-    : 'http://52.208.0.132:3000';  // Para producción en EC2
+    : 'http://52.50.208.231:3000';  // Para producción en EC2
 
 const loadComponent = (id, url) => { // vamos a hacer una funcion para cargar un componente. 
 
