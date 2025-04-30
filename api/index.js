@@ -19,12 +19,8 @@ const options = {
 };
 
 
-https.createServer(options, app).listen(443, () => {
-    console.log('Servidor HTTPS en puerto 443');
-});
-
 const app = express(); // crea una instancia del servidor llamada app
-const port = process.env.PORT || 3000; // elegimos la puerta de entrada al servidor
+const port = process.env.PORT || 443; // elegimos la puerta de entrada al servidor
 
 
 
@@ -34,6 +30,10 @@ AWS.config.update({ // conectamos nuestro Backend Con nuestro servicio de AWS
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,  // keys guardadas en el archivo de variables de entorno
 });
 
+
+https.createServer(options, app).listen(port, () => {
+    console.log('Servidor HTTPS en puerto 443');
+});
 
 
 app.use(cors({  //habilita cors. 
