@@ -19,11 +19,6 @@ const options = {
 };
 
 
-
-app.post('/pruba', (req, res) => {
-    res.json({ msg: 'OK desde HTTPS' });
-});
-
 https.createServer(options, app).listen(443, () => {
     console.log('Servidor HTTPS en puerto 443');
 });
@@ -52,6 +47,12 @@ app.use(bodyParser.json()); // permite que express entienda los datos del JSON q
 app.use(express.json());
 
 const dynamoDB = new AWS.DynamoDB.DocumentClient(); // creamos un cliente que nos permite facilmente hacer operaciones CRUD en la base de datos  
+
+app.post('/pruba', (req, res) => {
+    res.json({ msg: 'OK desde HTTPS' });
+});
+
+
 
 // backend/index.js
 app.get('/api/google-maps-key', (req, res) => {
