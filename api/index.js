@@ -1,65 +1,89 @@
-/* Librerias necesarias */
+/* ===============================
+   Librerías necesarias
+   =============================== */
 
 const express = require('express'); // Servidor web
 const bodyParser = require('body-parser'); // Para poder leer los datos JSON que llegan en peticiones post
 const https = require('https');
-const AWS = require('aws-sdk'); // para usar DynamoDB (la base de datos en AWSs)
-const cors = require('cors'); // Para comunicar front y back aunque esten en dominios distintos 
+const fs = require("fs"); // Es un módulo nativo de Node.js para interactuar con el sistema de archivos
+const AWS = require('aws-sdk'); // Para usar DynamoDB (la base de datos en AWS)
+const cors = require('cors'); // Para comunicar front y back aunque estén en dominios distintos
 const bcrypt = require('bcrypt'); // Para encriptar contraseñas
-require('dotenv').config({ path: 'local.env' }); // para usar variables de entorno
+require('dotenv').config({ path: 'local.env' }); // Para usar variables de entorno
 const { v4: uuidv4 } = require('uuid'); // Crea un id de forma aleatoria
 const nodemailer = require("nodemailer"); // Para enviar correos
-const PDFDocument = require("pdfkit"); // Es una librería para generar archivos PDF en Node.js.
-const fs = require("fs"); // Es un módulo nativo de Node.js (no tengo que instalarlo) para interactuar con el sistema de archivos. 
-const axios = require('axios'); // Es una librería para hacer peticiones HTTP (GET, POST, PUT, DELETE, etc.). la uso en este caso para meter las imagenes dentro del PDF ya que no estan alojadas localmente.
+const PDFDocument = require("pdfkit"); // Para generar archivos PDF en Node.js
+const axios = require('axios'); // Para hacer peticiones HTTP, en este caso para meter imágenes en el PDF
 
+
+/* ===============================
+   Configuración HTTPS y Express
+   =============================== */
+
+// Certificados HTTPS
 const options = {
-    key: fs.readFileSync('/home/ubuntu/certs/server.key'), // Ajusta si usas otra ruta
+    key: fs.readFileSync('/home/ubuntu/certs/server.key'),
     cert: fs.readFileSync('/home/ubuntu/certs/server.cert')
 };
 
+// Crear instancia del servidor Express
+const app = express();
 
-const app = express(); // crea una instancia del servidor llamada app
-const port = process.env.PORT || 443; // elegimos la puerta de entrada al servidor
+// Puerto (por defecto 443 si no se especifica otro en las variables de entorno)
+const port = process.env.PORT || 443;
 
 
+/* ===============================
+   Configuración AWS DynamoDB
+   =============================== */
 
-AWS.config.update({ // conectamos nuestro Backend Con nuestro servicio de AWS
-    region: 'eu-west-1', // Seleccionamos la region 
+AWS.config.update({
+    region: 'eu-west-1',
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,  // keys guardadas en el archivo de variables de entorno
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 });
 
-
-https.createServer(options, app).listen(port, () => {
-    console.log('Servidor HTTPS en puerto 443');
-});
+const dynamoDB = new AWS.DynamoDB.DocumentClient(); // Cliente para operaciones CRUD
 
 
-app.use(cors({  //habilita cors. 
-    origin: process.env.FRONTEND_URL, // esto es como decir "Permito que el navegador desde esta direccion haga peticiones a mi servidor express  que corre en esta otra"
+/* ===============================
+   Middlewares
+   =============================== */
+
+// Habilita CORS
+app.use(cors({
+    origin: process.env.FRONTEND_URL,
     credentials: true,
 }));
 
-
-app.use(bodyParser.json()); // permite que express entienda los datos del JSON que el font manda en las peticiones
-
+// Permite leer datos en formato JSON en las peticiones POST
+app.use(bodyParser.json());
 app.use(express.json());
 
-const dynamoDB = new AWS.DynamoDB.DocumentClient(); // creamos un cliente que nos permite facilmente hacer operaciones CRUD en la base de datos  
 
+/* ===============================
+   Rutas
+   =============================== */
+
+// Ruta de prueba
 app.post('/pruba', (req, res) => {
     res.json({ msg: 'OK desde HTTPS' });
 });
 
-
-
-// backend/index.js
+// Ruta para obtener la clave de Google Maps
 app.get('/api/google-maps-key', (req, res) => {
     console.log('Recibiendo solicitud para la clave de Google Maps');
     res.json({ apiKey: process.env.GOOGLE_MAPS_API_KEY });
 });
 
+
+/* ===============================
+   Levantar servidor HTTPS
+   =============================== */
+
+https.createServer(options, app).listen(port, () => {
+    console.log(`Servidor HTTPS en puerto ${port}`);
+});
 
 
 
@@ -846,7 +870,3 @@ app.post('/enviar-email', async (req, res) => {
 });
 
 
-// Iniciar servidor, esto arranca el servidor express y lo pone a escuchar peticiones Http
-app.listen(port, '0.0.0.0', () => { // 0.0.0.0 REPRESENTA todas las interfaces de red disponibles
-    console.log(`Servidor corriendo en http://localhost:${port}`);
-});
