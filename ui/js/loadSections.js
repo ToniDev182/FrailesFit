@@ -1,3 +1,7 @@
+const API_URL = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
+    ? 'http://localhost:3000'  // Para desarrollo local
+    : 'http://52.208.0.132:3000';  // Para producción en EC2
+
 const loadComponent = (id, url) => { // vamos a hacer una funcion para cargar un componente. 
 
     // window.locaticon para la pagina atual, pathname coge el paz y verificca si incluye src/pages, si es asi hacemos una ternaria para verificar que se cumple la condicion S si es asi, añadimos ../../ para poder cargar los componentes 
@@ -48,5 +52,5 @@ document.addEventListener("DOMContentLoaded", () => { // El codigo se dispara cu
         { id: "userRutina", url: "src/components/userRutina.html" },
     ].forEach(({ id, url }) => loadComponent(id, url));  // recorremos cada a elemento del array y llamamos a loadcomponent, haciendo una solicitud para cada uno de ellos, si es exitosa se carga el elemento dentro del DOM
 });
- 
+
 
