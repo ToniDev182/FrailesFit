@@ -29,8 +29,8 @@ const options = {
 // Crear instancia del servidor Express
 const app = express();
 
-// Puerto (por defecto 443 si no se especifica otro en las variables de entorno)
-const port = process.env.PORT || 443;
+// Puerto (por defecto 8080 si no se especifica otro en las variables de entorno)
+const port = process.env.PORT || 8443;
 
 
 /* ===============================
