@@ -81,11 +81,15 @@ app.get('/api/google-maps-key', (req, res) => {
    Levantar servidor HTTPS
    =============================== */
 
-https.createServer(options, app).listen(port, () => {
+/* https.createServer(options, app).listen(port, () => {
     console.log(`Servidor HTTPS en puerto ${port}`);
 });
 
+ */
 
+app.listen(80, () => {
+    console.log('Servidor HTTP en puerto 80 para Certbot');
+});
 
 // Obtener todos los usuarios
 app.get('/users', async (req, res) => {
