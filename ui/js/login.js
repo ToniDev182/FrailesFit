@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {  // se asegura que el codi
               email: data.email,
               tipoUsuario: data.tipoUsuario,
             }));
-
+ 
             // Esperar unos segundos para mostrar el spinner antes de redirigir
             setTimeout(() => {
               window.location.href = '../../index.html'; // Redirigir al index
