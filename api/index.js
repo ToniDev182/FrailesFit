@@ -19,17 +19,8 @@ const options = {
 };
 
 
-
-app.post('/pruba', (req, res) => {
-    res.json({ msg: 'OK desde HTTPS' });
-});
-
-https.createServer(options, app).listen(443, () => {
-    console.log('Servidor HTTPS en puerto 443');
-});
-
 const app = express(); // crea una instancia del servidor llamada app
-const port = process.env.PORT || 3000; // elegimos la puerta de entrada al servidor
+const port = process.env.PORT || 443; // elegimos la puerta de entrada al servidor
 
 
 
@@ -39,6 +30,10 @@ AWS.config.update({ // conectamos nuestro Backend Con nuestro servicio de AWS
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,  // keys guardadas en el archivo de variables de entorno
 });
 
+
+https.createServer(options, app).listen(port, () => {
+    console.log('Servidor HTTPS en puerto 443');
+});
 
 
 app.use(cors({  //habilita cors. 
@@ -52,6 +47,12 @@ app.use(bodyParser.json()); // permite que express entienda los datos del JSON q
 app.use(express.json());
 
 const dynamoDB = new AWS.DynamoDB.DocumentClient(); // creamos un cliente que nos permite facilmente hacer operaciones CRUD en la base de datos  
+
+app.post('/pruba', (req, res) => {
+    res.json({ msg: 'OK desde HTTPS' });
+});
+
+
 
 // backend/index.js
 app.get('/api/google-maps-key', (req, res) => {
