@@ -19,7 +19,7 @@ const options = {
 };
 
 
-app.use(express.json());
+
 app.post('/pruba', (req, res) => {
     res.json({ msg: 'OK desde HTTPS' });
 });
@@ -49,6 +49,7 @@ app.use(cors({  //habilita cors.
 
 app.use(bodyParser.json()); // permite que express entienda los datos del JSON que el font manda en las peticiones
 
+app.use(express.json());
 
 const dynamoDB = new AWS.DynamoDB.DocumentClient(); // creamos un cliente que nos permite facilmente hacer operaciones CRUD en la base de datos  
 
