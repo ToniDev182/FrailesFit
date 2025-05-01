@@ -1,4 +1,4 @@
-const API_URL = 'https://api.frailesfit.com'; 
+const API_URL = 'api.frailesfit.com'; 
 
 const loadComponent = (id, url) => { // vamos a hacer una funcion para cargar un componente. 
 
