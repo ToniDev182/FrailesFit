@@ -1,3 +1,5 @@
+const API_URL = 'https://api.frailesfit.com'; 
+
 const loadComponent = (id, url) => { // vamos a hacer una funcion para cargar un componente. 
 
     // window.locaticon para la pagina atual, pathname coge el paz y verificca si incluye src/pages, si es asi hacemos una ternaria para verificar que se cumple la condicion S si es asi, añadimos ../../ para poder cargar los componentes 

@@ -44,7 +44,7 @@ const dynamoDB = new AWS.DynamoDB.DocumentClient(); // Cliente para operaciones 
 
 // Habilita CORS
 app.use(cors({
-    origin: 'https://frailesfit.com',
+    origin: process.env.FRONTEND_URL,
     credentials: true,
 }));
 
