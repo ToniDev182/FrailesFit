@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 spinner.style.display = 'inline-block';
                 mensajeExito.style.display = 'none';
 
-                const response = await fetch('http://localhost:3000/enviar-email', {
+                const response = await fetch(`${API_URL}/enviar-email`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

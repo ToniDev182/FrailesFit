@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const response = await fetch('http://localhost:3000/users');
+        const response = await fetch(`${API_URL}/users`);
         const users = await response.json();
         const tableBody = document.getElementById('users-table-body');
 
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
 
                 try {
-                    const response = await fetch(`http://localhost:3000/users/${user.email}`, {
+                    const response = await fetch(`${API_URL}/${user.email}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(updatedUser),
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const confirmDelete = confirm('¿Estás seguro de que deseas eliminar este usuario?');
                 if (confirmDelete) {
                     try {
-                        const response = await fetch(`http://localhost:3000/users/${user.email}`, {
+                        const response = await fetch(`${API_URL}/users/${user.email}`, {
                             method: 'DELETE',
                             headers: { 'Content-Type': 'application/json' },
                         });

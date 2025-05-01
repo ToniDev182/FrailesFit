@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Función para enviar los datos del formulario al servidor
   const enviarDatosFormulario = async (datosFormulario) => {
     try {
-      const respuesta = await fetch('http://localhost:3000/register', {
+      const respuesta = await fetch(`${API_URL}/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

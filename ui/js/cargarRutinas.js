@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
           try {
               // Hacemos la solicitud para obtener la rutina asociada al usuario
-              const response = await fetch(`http://localhost:3000/rutinas/${userData.email}`);
+              const response = await fetch(`${API_URL}/rutinas/${userData.email}`);
               const data = await response.json();
 
               if (response.ok && data.rutina) {

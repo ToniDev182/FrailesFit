@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function cargarEjercicios() {
         try {
-            const res = await fetch("http://localhost:3000/ejercicios");
+            const res = await fetch(`${API_URL}/ejercicios`);
             if (!res.ok) throw new Error("Error al obtener los ejercicios. Estado: " + res.status);
 
             const data = await res.json();
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function cargarUsuarios() {
         try {
-            const res = await fetch("http://localhost:3000/users");
+            const res = await fetch(`${API_URL}/users`);
             if (!res.ok) throw new Error("Error al obtener los usuarios. Estado: " + res.status);
 
             const usuarios = await res.json();
@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             console.log("Enviando la rutina al backend...");
-            const response = await fetch("http://localhost:3000/rutinas", {
+            const response = await fetch(`${API_URL}/rutinas`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
