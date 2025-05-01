@@ -50,6 +50,7 @@ app.use(cors({
 
 // Permite leer datos en formato JSON en las peticiones POST
 app.use(bodyParser.json());
+app.use(express.json());
 
 
 /* ===============================
@@ -58,6 +59,7 @@ app.use(bodyParser.json());
 
 // Ruta de prueba
 app.get('/prueba', (req, res) => {
+    console.log('>> Se ha accedido a /prueba');
     res.json({ msg: 'OK desde HTTPS' });
 });
 
