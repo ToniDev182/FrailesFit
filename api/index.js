@@ -49,7 +49,6 @@ app.use(cors({
 }));
 
 // Permite leer datos en formato JSON en las peticiones POST
-app.use(bodyParser.json());
 app.use(express.json());
 
 
