@@ -1,4 +1,4 @@
-const API_URL = 'https://api.frailesfit.com'; 
+
 
 document.addEventListener('DOMContentLoaded', () => {  // se asegura que el codigo se ejecute solo cuando el HTML ha sido completamente cargado
   setTimeout(() => { // uso setTimeout para retrasar un poco la ejecucion del codigo para asegurarme que todo se carga
