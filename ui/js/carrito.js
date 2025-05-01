@@ -309,7 +309,7 @@ document.addEventListener("DOMContentLoaded", () => {
             };
 
             // Enviamos el pedido al backend mediante fetch (POST)
-            fetch("http://localhost:3000/api/realizar-pedido", {
+            fetch(`${API_URL}/api/realizar-pedido`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(pedido)

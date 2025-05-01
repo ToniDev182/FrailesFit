@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         // Hacemos la petición al endpoint para obtener todos los pagos
-        const response = await fetch('http://localhost:3000/api/pagos');
+        const response = await fetch(`${API_URL}/api/pagos`);
         const responseText = await response.text();  // Obtener la respuesta como texto
 
         let pagos;
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     updatedPago.mes_anio = mes_anio;
 
                     try {
-                        const response = await fetch(`http://localhost:3000/api/pagos/${pago.email}/${pago.mes_anio}`, {
+                        const response = await fetch(`${API_URL}/api/pagos/${pago.email}/${pago.mes_anio}`, {
                             method: 'PUT',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(updatedPago),
@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         newPago.mes_anio = mes_anio;
 
                         try {
-                            const response = await fetch('http://localhost:3000/api/pagos/nuevo', {
+                            const response = await fetch(`${API_URL}/api/pagos/nuevo`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify(newPago),
@@ -211,7 +211,7 @@ async function deletePago(pago, row) {
     const confirmDelete = confirm('¿Estás seguro de que deseas eliminar este pago?');
     if (confirmDelete) {
         try {
-            const response = await fetch(`http://localhost:3000/api/pagos/${pago ? pago.email : ''}/${pago ? pago.mes_anio : ''}`, {
+            const response = await fetch(`${API_URL}/api/pagos/${pago ? pago.email : ''}/${pago ? pago.mes_anio : ''}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
             });

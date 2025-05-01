@@ -260,12 +260,12 @@ app.post('/register', async (req, res) => {
             from: `"FrailesFit" <${process.env.EMAIL_USER}>`,
             to: email,
             subject: 'Confirma tu registro en FrailesFit',
-            text: `Hola ${nombre},\n\nGracias por registrarte en FrailesFit.\n\nConfirma tu cuenta haciendo clic en el siguiente enlace:\nhttp://${process.env.API_DOMAIN || 'localhost:3000'}/confirm/${email}\n\nSi no has solicitado este registro, puedes ignorar este mensaje.\n\nUn saludo,\nEl equipo de FrailesFit`,
+            text: `Hola ${nombre},\n\nGracias por registrarte en FrailesFit.\n\nConfirma tu cuenta haciendo clic en el siguiente enlace:\nhttps://${process.env.API_DOMAIN}/confirm/${email}\n\nSi no has solicitado este registro, puedes ignorar este mensaje.\n\nUn saludo,\nEl equipo de FrailesFit`,
             html: `
                 <p>Hola ${nombre},</p>
                 <p>Gracias por registrarte en <strong>FrailesFit</strong>.</p>
                 <p>Confirma tu cuenta haciendo clic en el siguiente enlace:</p>
-                <p><a href="http://${process.env.API_DOMAIN || 'localhost:3000'}/confirm/${email}">Confirmar cuenta</a></p>
+                <p><a href="https://${process.env.API_DOMAIN}/confirm/${email}">Confirmar cuenta</a></p>
                 <p>Si no solicitaste este registro, puedes ignorar este mensaje.</p>
                 <p style="color: gray;">Un saludo,<br>El equipo de FrailesFit</p>
             `,

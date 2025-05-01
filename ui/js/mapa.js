@@ -2,7 +2,7 @@
 async function loadGoogleMapsAPI() {
     try {
         // Hacer la solicitud al backend para obtener la clave de la API
-        const response = await fetch('http://localhost:3000/api/google-maps-key');
+        const response = await fetch(`${API_URL}/api/google-maps-key`);
         
         if (!response.ok) {
             throw new Error('Error al obtener la clave de la API.');
