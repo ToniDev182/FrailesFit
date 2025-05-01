@@ -4,7 +4,6 @@
 
 const express = require('express'); // Servidor web
 const bodyParser = require('body-parser'); // Para poder leer los datos JSON que llegan en peticiones post
-const https = require('https');
 const fs = require("fs"); // Es un módulo nativo de Node.js para interactuar con el sistema de archivos
 const AWS = require('aws-sdk'); // Para usar DynamoDB (la base de datos en AWS)
 const cors = require('cors'); // Para comunicar front y back aunque estén en dominios distintos
@@ -16,23 +15,15 @@ const PDFDocument = require("pdfkit"); // Para generar archivos PDF en Node.js
 const axios = require('axios'); // Para hacer peticiones HTTP, en este caso para meter imágenes en el PDF
 
 
-/* ===============================
-   Configuración HTTPS y Express
-   =============================== */
-
-// Certificados HTTPS
-const options = {
-    key: fs.readFileSync('/home/ubuntu/certs/server.key'),
-    cert: fs.readFileSync('/home/ubuntu/certs/server.cert')
-};
-
 // Crear instancia del servidor Express
 const app = express();
 
-// Puerto (por defecto 8080 si no se especifica otro en las variables de entorno)
-const port = process.env.PORT || 8443;
+// Puerto (por defecto  si no se especifica otro en las variables de entorno)
+const port = process.env.PORT;
 
-
+app.listen(port, () => {
+    console.log('Servidor HTTP en puerto 3000 para Certbot');
+});
 /* ===============================
    Configuración AWS DynamoDB
    =============================== */
@@ -77,19 +68,6 @@ app.get('/api/google-maps-key', (req, res) => {
 });
 
 
-/* ===============================
-   Levantar servidor HTTPS
-   =============================== */
-
-/* https.createServer(options, app).listen(port, () => {
-    console.log(`Servidor HTTPS en puerto ${port}`);
-});
-
- */
-
-app.listen(80, () => {
-    console.log('Servidor HTTP en puerto 80 para Certbot');
-});
 
 // Obtener todos los usuarios
 app.get('/users', async (req, res) => {
