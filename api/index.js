@@ -21,9 +21,10 @@ const app = express();
 // Puerto (por defecto  si no se especifica otro en las variables de entorno)
 const port = process.env.PORT;
 
-app.listen(port, () => {
-    console.log('Servidor HTTP en puerto 3000 para Certbot');
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Servidor HTTP escuchando en el puerto ${port}`);
 });
+
 /* ===============================
    Configuración AWS DynamoDB
    =============================== */
