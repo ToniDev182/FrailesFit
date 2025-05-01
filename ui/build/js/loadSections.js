@@ -1,4 +1,4 @@
-const API_URL = 'https://52.50.208.231:8443'; 
+const API_URL = 'api.frailesfit.com'; 
 
 const loadComponent = (id, url) => { // vamos a hacer una funcion para cargar un componente. 
 
