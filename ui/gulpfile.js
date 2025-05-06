@@ -27,7 +27,13 @@ function copyJs() {
     .pipe(dest('build/js'));
 }
 
-// 4) PURGAR Y MINIFICAR CSS => genera build/src/css/app.min.css
+// 4) COPIAR ARCHIVOS DE VÍDEO => genera build/src/video
+function copyVideo() {
+  return src('src/video/**/*.{mp4,webm}') // Copia los vídeos .mp4 y .webm
+    .pipe(dest('build/src/video'));
+}
+
+// 5) PURGAR Y MINIFICAR CSS => genera build/src/css/app.min.css
 function minifyCss() {
   return src('build/src/css/app.css')
     .pipe(
@@ -49,17 +55,18 @@ function dev() {
   watch('src/scss/**/*.scss', compileSass); // Vigila cambios en los archivos SCSS y recompila
   watch(['index.html', 'src/**/*.html'], copyHtml); // Vigila cambios en HTML y los copia
   watch('js/**/*.js', copyJs); // Vigila cambios en JS y los copia
+  watch('src/video/**/*.{mp4,webm}', copyVideo); // Vigila cambios en los vídeos y los copia
 }
 
 // ----------------------
 // TAREAS DE COMPILACIÓN
 // ----------------------
 exports.build = series(
-  parallel(compileSass, copyHtml, copyJs), // Ejecuta las tareas en paralelo
+  parallel(compileSass, copyHtml, copyJs, copyVideo), // Ejecuta las tareas en paralelo
   minifyCss // Luego minifica el CSS
 );
 
 exports.default = series(
-  parallel(compileSass, copyHtml, copyJs), // Ejecuta las tareas en paralelo
+  parallel(compileSass, copyHtml, copyJs, copyVideo), // Ejecuta las tareas en paralelo
   dev // Inicia el modo desarrollo con vigilancia de cambios
 );
