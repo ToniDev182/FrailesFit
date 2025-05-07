@@ -78,9 +78,19 @@ body {
 
     .logo {
         border-radius: 50%;
-        max-width: 9rem;
+        max-width: 7rem; 
         height: auto;
         object-fit: cover;
+
+        @media (min-width: 768px) {
+          
+            max-width: 9rem; 
+        }
+
+        @media (min-width: 992px) {
+         
+            max-width: 13rem; 
+        }
     }
 
     .heading {
