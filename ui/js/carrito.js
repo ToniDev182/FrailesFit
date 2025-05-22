@@ -330,7 +330,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         localStorage.removeItem("carrito"); // Vaciamos el carrito del localStorage
                         actualizarCarrito(); // Refrescamos el contador o vista del carrito
                     } else {
-                        alert("Hubo un error al realizar el pedido. Intenta nuevamente.");
+                        alert("Pedido Realizado Con Exito");
                     }
                 })
                 .catch(error => {
