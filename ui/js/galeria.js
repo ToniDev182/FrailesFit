@@ -1,15 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {  //Nos aseguramos de que la funcion se ejecuta despues de que se haya cargado todo el contenido. 
-    const galeriaContainer = document.getElementById("galeria"); // nuestro ul
-
-    if (galeriaContainer) { // si existe 
-        fetch("src/components/galeria.html") // hacemos una solicitud para obtener el contenido del archivo. 
-            .then(response => response.text()) // convertimos la respuesta en texto
-            .then(data => { // luego se inserta data dentro de nuestro selector 
-                galeriaContainer.innerHTML = data;
-                cargarModal();
-            });
-    }
-
+  
     fetch("src/components/modalGaleria.html") // hacemos la peticion 
         .then(response => response.text()) // obtenemos respuesta en texto 
         .then(data => { // 

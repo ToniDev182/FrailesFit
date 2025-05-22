@@ -1,25 +1,27 @@
 @use '../base/mixins' as m;
 @use '../custom' as *;
 
-
 $sepacarion: 5rem;
 
-.planes{
-    color:$verde;
+.planes {
+    color: $verde;
 }
 
 .plan {
     padding: 4rem 4rem 4rem 4rem;
-    border-bottom:  1px solid #e1e1e1;
+    border-bottom: 1px solid #e1e1e1;
+
+    background-image: url('https://i.postimg.cc/x1tbDd0N/trama2.avif');
+    background-repeat: repeat;
+    background-size: cover;
+    background-blend-mode: overlay;
 
     @include media-breakpoint-up(md) {
         border: none;
         @include transition(transform 300ms ease);
         &:hover {
             transform: scale(1.1);
-
         }
-
     }
 
     .precio {
@@ -36,21 +38,17 @@ $sepacarion: 5rem;
     &.negocio {
         border-radius: 4rem;
         background-color: $verde;
-        
-        /* Signo de & porque plan y negocio estan en el mismo elemento */
+
         @include media-breakpoint-up(md) {
             margin-top: -#{$sepacarion};
-            /* hace que el contenedor central crezca hacia arriba */
             margin-bottom: -#{$sepacarion};
             border-radius: 2rem;
             z-index: 100;
            
-            background-position-y: calc(2rem + #{$sepacarion}); /* Alineamos los iconos */
         }
     }
 
     &.pro {
-
         border-radius: 4rem;
         background-color: $white;
     }

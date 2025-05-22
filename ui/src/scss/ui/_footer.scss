@@ -1,7 +1,6 @@
 @use '../base/mixins' as m;
 @use '../custom' as *;
 
-
 .footer {
     @include m.background-image('https://i.postimg.cc/Pqbqd1DG/img_(64).jpg');
     background-size: cover;
@@ -15,30 +14,28 @@
     }
 
     &__container {
-      
         @include make-container;
         max-width: map-get($map: $container-max-widths, $key: xxl);
-          
     }
 
     &__row {
         padding-top: 5rem;
         @include make-row;
-       
-
     }
 
     &__widget {
-
         @include make-col-ready;
 
         @include media-breakpoint-up(md) {
-            @include make-col(3)
-         
+            @include make-col(3);
         }
 
-   
-
+        @include media-breakpoint-down(md) {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
     }
 
     &__logo {
@@ -51,33 +48,31 @@
 
     &__heading {
         color: $verde;
-        text-align: center;
+        text-align: left;
     }
 
-  
-
     &__link {
-        text-align: center;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
         color: $white;
         text-decoration: none;
-        display: block;
-        /* para que tomen todo el ancho disponible */
         font-size: 1.6rem;
         margin-bottom: 1rem;
-        &:hover{
+        text-align: left;
+
+        &:hover {
             color: $verde;
         }
+
     }
 
     &__copyright {
-     
         @include make-container;
         max-width: map-get($map: $container-max-widths, $key: xxl);
-       
-
-        border-top: 2px solid $primary ;
+        border-top: 2px solid $primary;
         font-size: 1.2rem;
-        text-align:center;
+        text-align: center;
         padding: 1rem;
         margin-bottom: 0;
     }
