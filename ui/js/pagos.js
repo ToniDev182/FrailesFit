@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         }
 
                         // Generación automática del campo mes_anio
-                        const mes_anio = `${newPago.anio}-${String(newPago.mes).padStart(2, '0')}`;
+                        const mes_anio = `${newPago.anio}-${String(newPago.mes)}`;
                         newPago.mes_anio = mes_anio;
 
                         try {

@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         lista.forEach((ej) => {
             const col = document.createElement("div");
-            col.className = "col-md-4 mb-3";
+            col.className = "col-md-2 mb-3";
 
             col.innerHTML = `
                 <div class="card h-100">
