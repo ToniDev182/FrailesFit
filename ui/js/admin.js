@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
 
                 try {
-                    const response = await fetch(`${API_URL}/${user.email}`, {
+                    const response = await fetch(`${API_URL}/users/${user.email}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(updatedUser),
