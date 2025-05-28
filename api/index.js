@@ -425,7 +425,7 @@ app.put('/api/pagos/:email/:mes_anio', async (req, res) => {
             ':cantidad': updatedData.cantidad,
             ':metodo': updatedData.metodo,
         },
-        ReturnValues: 'UPDATED_NEW',
+        ReturnValues: 'UPDATED_NEW', // Retorna solo los datos actualizados 
     };
 
     try {
@@ -437,41 +437,6 @@ app.put('/api/pagos/:email/:mes_anio', async (req, res) => {
 });
 
 
-app.post('/api/pagos', async (req, res) => {
-    const data = req.body;
-
-    // Validación básica de datos
-    if (!data.email || !data.mes_anio || !data.mes || !data.anio || !data.estado || !data.metodo) {
-        return res.status(400).json({ message: 'Faltan datos necesarios para el pago' });
-    }
-
-    const params = {
-        TableName: 'Pagos',
-        Item: {
-            email: data.email,
-            mes_anio: data.mes_anio,
-            mes: data.mes,
-            anio: data.anio,
-            estado: data.estado,
-            fechaPago: data.fechaPago || new Date().toISOString(), // Si no se pasa una fecha, se usa la actual
-            cantidad: data.cantidad,
-            metodo: data.metodo,
-            nombre: data.nombre,
-            apellidos: data.apellidos
-        }
-    };
-
-    try {
-        await dynamoDB.put(params).promise();
-        res.status(201).json({ message: 'Pago insertado correctamente' });
-    } catch (error) {
-        console.error('Error al insertar el pago:', error);
-        res.status(500).json({
-            message: 'Error al insertar el pago',
-            error: error.message
-        });
-    }
-});
 
 // borrar un pago
 app.delete('/api/pagos/:email/:mes_anio', async (req, res) => {
@@ -502,7 +467,7 @@ app.post('/api/pagos/nuevo', async (req, res) => {
 
 
     // Generación del campo mes_anio
-    const mes_anio = `${anio}-${String(mes).padStart(2, '0')}`;
+    const mes_anio = `${anio}-${String(mes)}`;
 
     // Datos para almacenar en DynamoDB
     const newPago = {
