@@ -37,7 +37,7 @@ $sepacarion: 5rem;
 
     &.negocio {
         border-radius: 4rem;
-        background-color: $verde;
+        background-color: gold;
 
         @include media-breakpoint-up(md) {
             margin-top: -#{$sepacarion};
