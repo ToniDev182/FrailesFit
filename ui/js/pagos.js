@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           sugerencias.style.display = 'none';
         }
 
-        actualizarPagos(texto);
+        // ⛔️ No mostrar pagos aquí, solo al hacer clic en sugerencia
       });
 
       document.addEventListener('click', (e) => {
@@ -200,7 +200,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       });
 
-      actualizarPagos('');
+      // ⛔️ NO mostrar pagos al cargar
+      // actualizarPagos('');
     });
 
   } catch (error) {
