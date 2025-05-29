@@ -175,6 +175,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
           coincidencias.forEach(nombre => {
             const li = document.createElement('li');
+            li.classList.add("list-group-item");
             li.textContent = nombre;
             li.style.padding = '6px 12px';
             li.style.cursor = 'pointer';
