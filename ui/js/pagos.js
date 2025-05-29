@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const tableBody = document.getElementById('pagos-table-body');
-    const sugerencias = document.getElementById('sugerencias');
+    const sugerencias = document.getElementById('listaSugerenciasPagos');
 
     const actualizarPagos = (textoBusqueda) => {
       tableBody.innerHTML = '';
