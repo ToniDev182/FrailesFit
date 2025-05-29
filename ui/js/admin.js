@@ -5,7 +5,7 @@ function esperarElemento(selector, callback) {
       clearInterval(interval);
       callback(element);
     }
-  }, 100); // Revisa cada 100ms
+  }, 100); 
 }
 
 esperarElemento('#inputBusqueda', (inputBusqueda) => {
