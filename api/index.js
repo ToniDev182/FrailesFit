@@ -78,7 +78,7 @@ app.get('/users/search', async (req, res) => {
   }
 
   try {
-    // Escanea todos los usuarios (esto puede ser mejorable con índices secundarios en DynamoDB)
+    // Escanea todos los usuarios 
     const params = { TableName: 'usuarios' };
     const data = await dynamoDB.scan(params).promise();
 
@@ -95,45 +95,6 @@ app.get('/users/search', async (req, res) => {
   }
 });
 
-
-//
-
-// Obtener todos los usuarios
-app.get('/users', async (req, res) => {
-    // Petición tipo GET con una solicitud (req) y una respuesta (res)
-    // Además, es asincrónica para esperar a la búsqueda en la base de datos
-
-    const params = {
-        TableName: 'usuarios', // nombre de la tabla en DynamoDB
-    };
-
-    try {
-        // scan recupera todos los elementos de la tabla 
-        // y .promise() convierte la operación en una promesa
-        const data = await dynamoDB.scan(params).promise();
-
-        // Ordenamos los usuarios por nombre y, si hay empate, por apellidos
-        const usuariosOrdenados = data.Items.sort((a, b) => {
-            const nombreA = a.nombre?.toLowerCase() || '';      // Prevención si viene nulo
-            const nombreB = b.nombre?.toLowerCase() || '';
-            const apellidosA = a.apellidos?.toLowerCase() || '';
-            const apellidosB = b.apellidos?.toLowerCase() || '';
-
-            if (nombreA === nombreB) {
-                return apellidosA.localeCompare(apellidosB); // Si los nombres son iguales, compara apellidos
-            }
-
-            return nombreA.localeCompare(nombreB); // Si no, compara por nombre
-        });
-
-        // Si la operación es exitosa devuelve los usuarios ordenados en formato JSON
-        res.json(usuariosOrdenados);
-    } catch (error) {
-        // Si hay algún error se captura y se devuelve error 500
-        console.error('Error al obtener los usuarios:', error);
-        res.status(500).json({ error: 'No se pudieron obtener los usuarios' });
-    }
-});
 
 // Eliminar un usuario
 app.delete('/users/:email', async (req, res) => {
@@ -394,42 +355,20 @@ app.post('/login', async (req, res) => {  // endPoit de tipo post donde vamos a 
 });
 
 
+// Trae todos los pagos 
 
-// Obtener todos los pagos
 app.get('/api/pagos', async (req, res) => {
-    // Petición tipo GET con una solicitud (req) y una respuesta (res)
-    // Es asincrónica para esperar a la operación de base de datos
-
-    const params = {
-        TableName: 'Pagos', // nombre de la tabla en DynamoDB
-    };
+    const params = { TableName: 'Pagos' };
 
     try {
-        // Recuperamos todos los pagos de la tabla
         const data = await dynamoDB.scan(params).promise();
-
-        // Ordenamos los pagos por nombre y, si hay empate, por apellidos
-        const pagosOrdenados = data.Items.sort((a, b) => {
-            const nombreA = a.nombre?.toLowerCase() || '';
-            const nombreB = b.nombre?.toLowerCase() || '';
-            const apellidosA = a.apellidos?.toLowerCase() || '';
-            const apellidosB = b.apellidos?.toLowerCase() || '';
-
-            if (nombreA === nombreB) {
-                return apellidosA.localeCompare(apellidosB); // Compara apellidos si los nombres son iguales
-            }
-
-            return nombreA.localeCompare(nombreB); // Compara por nombre si son diferentes
-        });
-
-        // Si todo va bien, devolvemos los pagos ordenados en formato JSON
-        res.json(pagosOrdenados);
+        res.json(data.Items); // Sin ordenar, devolver tal cual
     } catch (error) {
-        // Si ocurre un error, lo capturamos y enviamos un error 500
         console.error('Error al obtener pagos:', error);
         res.status(500).json({ message: 'Error al obtener los pagos' });
     }
 });
+
 
 
 // actualizar un pago

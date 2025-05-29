@@ -1,41 +1,50 @@
 <section id="pagos" class="container my-5">
-    <h2 class="text-center mb-4 galeriaHeader">Administrar Pagos de Usuarios</h2>
-  
-    <!-- Filtro por usuario -->
-    <div class="mb-4 d-flex justify-content-center">
-      <select id="filtro-usuarios" class="form-select w-auto">
-        <option value="">-- Filtrar por usuario --</option>
-        <!-- Las opciones se llenarán dinámicamente con JS -->
-      </select>
-    </div>
-  
-    <div class="table-responsive">
-      <table class="table table-striped table-bordered text-center align-middle">
-        <thead class="table-dark">
-          <tr>
-            <th>Email</th>
-            <th>Mes/Año</th>
-            <th>Nombre</th>
-            <th>Apellidos</th>
-            <th>Mes</th>
-            <th>Año</th>
-            <th>Estado</th>
-            <th>Fecha de Pago</th>
-            <th>Importe (€)</th>
-            <th>Método</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody id="pagos-table-body">
-          <!-- Aquí se llenarán los pagos con JavaScript -->
-        </tbody>
-      </table>
-    </div>
-  
-    <div class="d-flex justify-content-center mb-4">
-      <a href="panelAdmin.html" class="btn btn-secondary btn-lg">
-        <i class="fas fa-arrow-left"></i> Volver al Panel
-      </a>
-    </div>
-  </section>
-  
+  <h2 class="text-center mb-4 galeriaHeader">Administrar Pagos de Usuarios</h2>
+
+  <!-- Buscador -->
+  <div class="mb-4 position-relative">
+    <label for="inputBusquedaPagos" class="form-label galeriaHeader fw-bold">Buscar pagos por usuario:</label>
+    <input
+      type="text"
+      id="inputBusquedaPagos"
+      class="form-control"
+      placeholder="Escribe nombre y/o apellidos"
+      autocomplete="off"
+    />
+    <ul
+      id="listaSugerenciasPagos"
+      class="list-group position-absolute w-100"
+      style="z-index: 1000; max-height: 200px; overflow-y: auto;"
+    ></ul>
+  </div>
+
+  <!-- Tabla de pagos -->
+  <div class="table-responsive">
+    <table class="table table-striped table-bordered text-center align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>Email</th>
+          <th>Mes/Año</th>
+          <th>Nombre</th>
+          <th>Apellidos</th>
+          <th>Mes</th>
+          <th>Año</th>
+          <th>Estado</th>
+          <th>Fecha de Pago</th>
+          <th>Importe (€)</th>
+          <th>Método</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="pagos-table-body">
+        <!-- Aquí se llenarán los pagos -->
+      </tbody>
+    </table>
+  </div>
+
+  <div class="d-flex justify-content-center mb-4">
+    <a href="panelAdmin.html" class="btn btn-secondary btn-lg">
+      <i class="fas fa-arrow-left"></i> Volver al Panel
+    </a>
+  </div>
+</section>
