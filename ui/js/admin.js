@@ -1,19 +1,25 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const inputBusqueda = document.getElementById('inputBusqueda');
+function esperarElemento(selector, callback) {
+  const interval = setInterval(() => {
+    const element = document.querySelector(selector);
+    if (element) {
+      clearInterval(interval);
+      callback(element);
+    }
+  }, 100); // Revisa cada 100ms
+}
+
+esperarElemento('#inputBusqueda', (inputBusqueda) => {
   const listaSugerencias = document.getElementById('listaSugerencias');
   const tableBody = document.getElementById('users-table-body');
 
-  // Función para limpiar la tabla de usuario(s)
   function limpiarTabla() {
     tableBody.innerHTML = '';
   }
 
-  // Función para mostrar un usuario en la tabla (igual que antes)
   function mostrarUsuario(user) {
     limpiarTabla();
 
     const row = document.createElement('tr');
-
     row.innerHTML = `
       <td><input type="text" value="${user.nombre}" class="form-control edit-field" data-field="nombre"></td>
       <td><input type="text" value="${user.apellidos}" class="form-control edit-field" data-field="apellidos"></td>
@@ -31,11 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     tableBody.appendChild(row);
 
-    // Guardar cambios
     const saveButton = row.querySelector('.save-btn');
     saveButton.addEventListener('click', async () => {
       const updatedUser = {};
-
       row.querySelectorAll('.edit-field').forEach(input => {
         updatedUser[input.getAttribute('data-field')] = input.value;
       });
@@ -48,10 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const data = await response.json();
-
         if (response.ok) {
           alert('Usuario actualizado correctamente');
-          // Actualizar email en caso de que cambie para futuras operaciones (si aplicase)
           user.email = updatedUser.email;
         } else {
           alert(data.message);
@@ -62,7 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Eliminar usuario
     const deleteButton = row.querySelector('.delete-btn');
     deleteButton.addEventListener('click', async () => {
       const confirmDelete = confirm('¿Estás seguro de que deseas eliminar este usuario?');
@@ -90,7 +91,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Buscar usuarios para sugerencias según el texto (fetch al backend)
   async function buscarUsuarios(query) {
     if (!query) {
       listaSugerencias.innerHTML = '';
@@ -99,12 +99,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       const response = await fetch(`${API_URL}/users/search?q=${encodeURIComponent(query)}`);
-      if (!response.ok) {
-        throw new Error('Error buscando usuarios');
-      }
-      const users = await response.json();
+      if (!response.ok) throw new Error('Error buscando usuarios');
 
-      // Mostrar sugerencias
+      const users = await response.json();
       listaSugerencias.innerHTML = '';
 
       if (users.length === 0) {
@@ -134,7 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Evento input con debounce para no saturar peticiones
   let debounceTimeout;
   inputBusqueda.addEventListener('input', () => {
     clearTimeout(debounceTimeout);
