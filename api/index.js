@@ -68,7 +68,35 @@ app.get('/api/google-maps-key', (req, res) => {
     res.json({ apiKey: process.env.GOOGLE_MAPS_API_KEY });
 });
 
+// BUSCADOR
 
+app.get('/users/search', async (req, res) => {
+  const { q } = req.query; // q es la cadena de búsqueda (nombre y/o apellidos)
+
+  if (!q || q.trim() === '') {
+    return res.status(400).json({ error: 'Parámetro de búsqueda "q" requerido' });
+  }
+
+  try {
+    // Escanea todos los usuarios (esto puede ser mejorable con índices secundarios en DynamoDB)
+    const params = { TableName: 'usuarios' };
+    const data = await dynamoDB.scan(params).promise();
+
+    // Filtra los usuarios cuyo nombre o apellidos incluyen la búsqueda (case insensitive)
+    const resultados = data.Items.filter(user => {
+      const nombreCompleto = `${user.nombre ?? ''} ${user.apellidos ?? ''}`.toLowerCase();
+      return nombreCompleto.includes(q.toLowerCase());
+    });
+
+    res.json(resultados);
+  } catch (error) {
+    console.error('Error en búsqueda de usuarios:', error);
+    res.status(500).json({ error: 'Error al buscar usuarios' });
+  }
+});
+
+
+//
 
 // Obtener todos los usuarios
 app.get('/users', async (req, res) => {
