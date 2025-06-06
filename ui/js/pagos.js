@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                             if (response.ok) {
                                 alert('Nuevo pago creado correctamente');
-                                pagos.push(newPago); // Opcional: actualizar la lista local
+                                pagos.push(newPago); 
                                 actualizarPagos(`${newPago.nombre} ${newPago.apellidos}`);
                             } else {
                                 alert(data.message || 'Error desconocido al guardar el pago.');
