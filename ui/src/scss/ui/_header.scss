@@ -9,7 +9,7 @@ body {
     height: 100vh;
     position: relative;
 
- .envoltorio-video-fondo {
+    .envoltorio-video-fondo {
         position: absolute;
         top: 0;
         left: 0;
@@ -41,7 +41,7 @@ body {
         }
     }
 
-    .slide-derecha{
+    .slide-derecha {
         position: absolute;
         z-index: -1;
     }
@@ -83,23 +83,23 @@ body {
 
     .logo {
         border-radius: 50%;
-        max-width: 7rem; 
+        max-width: 7rem;
         height: auto;
         object-fit: cover;
 
         @media (min-width: 768px) {
-          
-            max-width: 9rem; 
+
+            max-width: 9rem;
         }
 
         @media (min-width: 992px) {
-         
-            max-width: 13rem; 
+
+            max-width: 13rem;
         }
     }
 
 
-   
+
     .heading {
         color: $white;
         font-size: 1rem !important;
@@ -133,12 +133,14 @@ body {
     }
 
     .heading-data {
+
         .telefono,
         .correo {
             font-size: 1.2rem;
         }
 
         @media (max-width: 767px) {
+
             .telefono,
             .correo {
                 font-size: 0.6rem;
@@ -164,5 +166,21 @@ body {
 
     .user-name {
         font-size: 0.8rem;
+    }
+}
+
+.adminBoton {
+
+    background-color: $verde;
+    color: $white;
+    border-radius: 0.375rem;
+
+    &:focus {
+        box-shadow: none;
+    }
+
+    &:hover {
+        background-color: $white;
+        color: $verde;
     }
 }
